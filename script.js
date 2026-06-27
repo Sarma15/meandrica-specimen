@@ -233,15 +233,14 @@
     T.leadV.textContent = l.toFixed(2);
   }
   const testerTag = document.getElementById("testerTag");
-  function mirrorTester() {
-    if (testerTag && T.text) testerTag.textContent = "/ " + (T.text.textContent || "").toUpperCase();
-  }
+  function syncTester(src, dst) { if (src && dst) dst.textContent = (src.textContent || "").toUpperCase(); }
   if (T.text) {
     T.style.addEventListener("change", () => { T.varR.value = T.style.value; applyTester(); });
     [T.varR, T.sizeR, T.leadR].forEach(r => r.addEventListener("input", applyTester));
-    T.text.addEventListener("input", mirrorTester);   // live Latin mirror of what you type
+    T.text.addEventListener("input", () => syncTester(T.text, testerTag));            // glagolitic -> latin
+    if (testerTag) testerTag.addEventListener("input", () => syncTester(testerTag, T.text));  // latin -> glagolitic
     applyTester();
-    mirrorTester();
+    syncTester(T.text, testerTag);
   }
 
   /* ---- KATEDRA: loop through 3 photos, 0.5s each ---- */
@@ -348,34 +347,114 @@
     });
   }
 
-  /* ---- language toggle (visual state only for now) ---- */
-  document.querySelectorAll(".lang-btn").forEach(b => {
-    b.addEventListener("click", () => {
-      document.querySelectorAll(".lang-btn").forEach(x => x.classList.remove("is-active"));
-      b.classList.add("is-active");
+  /* ---- LANGUAGE TOGGLE: HR <-> ENG (swaps Latin-script text; Meandrica glyphs stay) ---- */
+  let meLang = "hr";
+  const EN = {
+    "about-lead": "Meandrica is a Glagolitic variable font inspired by the meanders of Julije Knifer — a Croatian artist whose monochrome meanders became a symbol of the conceptual art of the second half of the 20th century.",
+    "about-p2": "Meandrica has three styles and two axes of variability — height and contrast. This gives the user complete control over their design. The font is shown off best when you take it a step further and use animation to reveal its dynamics and variability — everything that the Glagolitic script as we knew it could not offer before.",
+    "about-p3": "It supports only the Croatian language, as one of the few languages whose writing once made use of the Glagolitic script.",
+    "knifer-body": "Like Knifer's meanders, Meandrica explores the possibilities of rhythm in continuous forms and contrast. Legibility is reduced, but since the Glagolitic script has long been out of practical use, this flaw can only bother historians and archaeologists. So the question arises — is Meandrica a font at all, or is it actually a visual performance in the form of an .otf file?",
+    "glago-lead": "Glagolitic is an alphabet created in the mid-9th century after the model of Greek, originally conceived for the phonetically precise rendering of Old Church Slavonic and the Slavic vernaculars in the context of the Christian mission among the Slavic peoples.",
+    "glago-p1": "Angular Glagolitic is a later variant of the original, rounded Glagolitic. The same alphabet, but with sharp angles.",
+    "glago-p2": "It developed from the rounded form during the 12th and 13th centuries, when priests in the area of present-day Croatia (especially in Istria and the Kvarner) began to write faster, more practically and on poorer paper, turning the rounded lines into straight ones.",
+    "aleja-label": "ALEJA GLAGOLJAŠA / CONTENTS",
+    "aleja-p1": "How do you present the Glagolitic script without showing off the finest Glagolitic museum? The Alley of the Glagolites is a stone memorial path between two Istrian gems – the medieval towns of Hum („the smallest town in the world“ according to Guinness) and Roč („the Glagolitic capital“). It is about 7 kilometres long and full of symbols, inscriptions and sculptures in the shape of Glagolitic letters – in fact, the whole path is an open-air museum dedicated to Croatia's Glagolitic heritage.",
+    "aleja-p2": "The Alley was conceived by Josip Bratulić, sculpturally realised by Želimir Janeš, and named by Zvane Črnja.",
+    "stup-h4": "PILLAR OF THE ČAKAVIAN ASSEMBLY",
+    "stup-p": "The Čakavian Assembly chose the letter <b>S</b> as its emblem, which in Glagolitic looks like an Istrian mushroom. In the Old Slavonic alphabet the letter S is called <i>slovo</i>, a term that denotes several concepts: mind, reason, word, etc.",
+    "stol-h4": "TABLE OF CYRIL AND METHODIUS",
+    "stol-p": "<i>Omne trinum perfectum</i> = everything in threes is perfect. Why a table? That is where the family gathers, eats, talks and agrees — it is the place of gathering.",
+    "katedra-h4": "CATHEDRA OF CLEMENT OF OHRID",
+    "katedra-p": "The most interesting fact about this monument is that it stands beneath an oak full of clusters of mistletoe, and from the white mistletoe of the Hum region they make a well-known brandy called <b>biska</b>.",
+    "lap-h4": "GLAGOLITIC LAPIDARIUM",
+    "lap-p": "In Brnobići, by the little church of Our Lady of the Snows, a drystone wall bears replicas of the 11 oldest Glagolitic inscriptions – from the Baška Tablet to the Valun Tablet.",
+    "klanac-h4": "RAVINE OF THE CROATIAN LUCIDARS",
+    "klanac-p": "This is actually a monument to the weather forecast of its day. It depicts Mount Učka and the cloud from which the Istrians<br>would read whether it would rain or not.",
+    "vidikovac-h4": "LOOKOUT OF<br>GREGORY OF NIN",
+    "vidikovac-p": "A large stone block with inscriptions in three scripts: Glagolitic, Cyrillic and Latin. Gregory of Nin was a bishop who introduced worship in the vernacular language.",
+    "uspon-h4": "ASCENT OF THE<br>ISTRIAN DEMARCATION",
+    "uspon-p": "Stone „stećci“ climb the path writing the words ISTARSKI RAZVOD in Glagolitic – the name of a 1325 document that first mentioned the „Croatian language“ in a legal text.",
+    "zid-h4": "WALL OF CROATIAN<br>PROTESTANTS AND HERETICS",
+    "zid-p": "A drystone wall with names such as Matija Vlačić Ilirik and Marko Antun Dominis – those who in the 16th century printed the Gospel in the vernacular and paid for it. The wall does not defend property, but memory: heretics were often simply those who spoke the truth too loudly.",
+    "odmoriste-h4": "RESTING PLACE OF DEACON JURAJ",
+    "odmoriste-p": "Eight stone blocks shaped like printing letters spell the name ŽAKN JURI – the man who in 1483 helped publish the first Croatian printed book. The monument is also a bench: after the climb from Roč, you have earned the right to sit and read the inscription VITA VITA / ŠTAMPA NAŠA.",
+    "spomenik-h4": "MONUMENT TO<br>RESISTANCE AND FREEDOM",
+    "spomenik-p": "Three stone blocks stacked one upon another symbolise three ages: antiquity, the Middle Ages and the modern age, but a single message: resistance to violence and the longing for freedom are eternal. It was created instead of a planned obelisk when lightning felled a hundred-year-old oak – nature decided that something different was needed here.",
+    "humska-h4": "THE HUM GATE",
+    "humska-p": "Heavy copper double doors with handles shaped like the horns of a boškarin ox bear two inscriptions: an old Glagolitic one (<i>I vrata ne zatvoret se v dne...</i>) and a contemporary poem by Vladimir Pernić. Entering the smallest town in the world begins by opening the doors which, according to the inscription, are never locked — except perhaps to the <i>defiled</i>.",
+    "footer-1": "MEANDRICA · VARIABLE GLAGOLITIC FONT · TYPE SPECIMEN",
+    "footer-2": "© 2026 AMRA LEVAK · University of Rijeka",
+    "lap-tip": "GLAGOLJATI = TO SPEAK",
+    "hl-1": "THE GATES DO NOT CLOSE BY DAY",
+    "hl-2": "THERE IS NO NIGHT IN THIS TOWN",
+    "hl-3": "AND LET NONE ENTER WHO IS DEFILED",
+  };
+  function setLang(lang) {
+    meLang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      if (el.dataset.hr === undefined) el.dataset.hr = el.innerHTML;
+      el.innerHTML = (lang === "eng" && EN[el.dataset.i18n] !== undefined) ? EN[el.dataset.i18n] : el.dataset.hr;
     });
+    document.documentElement.lang = (lang === "eng") ? "en" : "hr";
+    document.querySelectorAll(".lang-btn").forEach(x => x.classList.toggle("is-active", x.dataset.lang === lang));
+  }
+  document.querySelectorAll(".lang-btn").forEach(b => {
+    b.addEventListener("click", () => setLang(b.dataset.lang));
   });
+
+  /* ---- DOWNLOAD FONT: count downloads privately (not shown on the page) ----
+     Check the total anytime (only you) at:
+     https://abacus.jasoncameron.dev/get/meandrica-amra-levak/font-downloads  */
+  const dlCta = document.getElementById("getfontCta");
+  if (dlCta) {
+    dlCta.addEventListener("click", () => {
+      fetch("https://abacus.jasoncameron.dev/hit/meandrica-amra-levak/font-downloads").catch(() => {});
+    });
+  }
+
+  /* ---- MAP: custom circle cursor that grows over a clickable monument ---- */
+  const alejaMap = document.querySelector(".aleja-map");
+  if (alejaMap) {
+    const mapCursor = document.createElement("div");
+    mapCursor.className = "map-cursor";
+    document.body.appendChild(mapCursor);
+    alejaMap.addEventListener("mousemove", (e) => {
+      mapCursor.style.left = e.clientX + "px";
+      mapCursor.style.top = e.clientY + "px";
+      mapCursor.classList.add("on");
+    });
+    alejaMap.addEventListener("mouseleave", () => mapCursor.classList.remove("on"));
+    document.querySelectorAll(".map-hot").forEach(h => {
+      h.addEventListener("mouseenter", () => mapCursor.classList.add("big"));
+      h.addEventListener("mouseleave", () => mapCursor.classList.remove("big"));
+    });
+  }
 
   /* ---- Latin-translation tooltip on every Meandrica display word ---- */
   const meTip = document.createElement("div");
   meTip.className = "me-tip";
   document.body.appendChild(meTip);
   const meTargets = [
-    [".hero-word", "MEANDRICA"],
+    [".hero-word", "MEANDRIKA"],
     [".big-glyph", "AMRA"],
     [".knifer-word", "KNIFER"],
     [".stup-ss", "SS"],
-    [".olinfos", "OLINFOS"],
+    [".olinfos", "OLINFOS = STARI LATINSKI I SREDNJOVJEKOVNI NAZIV ZA PLANINU UČKU",
+                 "OLINFOS = THE OLD LATIN AND MEDIEVAL NAME FOR MOUNT UČKA"],
+    [".zid-crop", "FIDES = LATINSKA RIJEČ KOJA ZNAČI VJERA, POVJERENJE, POŠTENJE ILI VJERNOST ZADANOJ RIJEČI.",
+                  "FIDES = A LATIN WORD MEANING FAITH, TRUST, HONESTY OR FIDELITY TO ONE'S GIVEN WORD."],
+    [".glago-photo", "AZ BUKI VEDE GLAGOL = PRVA ČETIRI SLOVA STAROSLAVENSKE ABECEDE KOJA TVORE SMISLENU PORUKU: JA SLOVA ZNAJUĆI GOVORIM",
+                     "AZ BUKI VEDE GLAGOL = THE FIRST FOUR LETTERS OF THE OLD SLAVONIC ALPHABET THAT FORM A MEANINGFUL MESSAGE: I, KNOWING THE LETTERS, SPEAK"],
     [".vid-istra", "ISTRA"],
     [".uspon-word", "LLLLLLL"],
     [".odm-marquee-track", "VITA VITA · ŠTAMPA NAŠA · GORI GRE"],
     [".sfsn-word", "SMRT FAŠIZMU SLOBODA NARODU"],
   ];
-  meTargets.forEach(([sel, latin]) => {
+  meTargets.forEach(([sel, hr, en]) => {
     document.querySelectorAll(sel).forEach(el => {
       el.style.cursor = "help";
       el.style.pointerEvents = "auto";
-      el.addEventListener("mouseenter", () => { meTip.textContent = latin; meTip.classList.add("on"); });
+      el.addEventListener("mouseenter", () => { meTip.textContent = (meLang === "eng" && en) ? en : hr; meTip.classList.add("on"); });
       el.addEventListener("mousemove", (e) => {
         meTip.style.left = e.clientX + "px";
         meTip.style.top = (e.clientY - 18) + "px";
