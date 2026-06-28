@@ -357,30 +357,31 @@
     "glago-lead": "Glagolitic is an alphabet created in the mid-9th century after the model of Greek, originally conceived for the phonetically precise rendering of Old Church Slavonic and the Slavic vernaculars in the context of the Christian mission among the Slavic peoples.",
     "glago-p1": "Angular Glagolitic is a later variant of the original, rounded Glagolitic. The same alphabet, but with sharp angles.",
     "glago-p2": "It developed from the rounded form during the 12th and 13th centuries, when priests in the area of present-day Croatia (especially in Istria and the Kvarner) began to write faster, more practically and on poorer paper, turning the rounded lines into straight ones.",
-    "aleja-label": "ALEJA GLAGOLJAŠA / CONTENTS",
-    "aleja-p1": "How do you present the Glagolitic script without showing off the finest Glagolitic museum? The Alley of the Glagolites is a stone memorial path between two Istrian gems – the medieval towns of Hum („the smallest town in the world“ according to Guinness) and Roč („the Glagolitic capital“). It is about 7 kilometres long and full of symbols, inscriptions and sculptures in the shape of Glagolitic letters – in fact, the whole path is an open-air museum dedicated to Croatia's Glagolitic heritage.",
+    "nav-aleja": "ALLEY",
+    "aleja-label": "THE ALLEY OF GLAGOLITIC PRIESTS / CONTENTS",
+    "aleja-p1": "How do you present the Glagolitic script without showing off the finest Glagolitic museum? The Alley of Glagolitic Priests is a stone memorial path between two Istrian gems – the medieval towns of Hum („the smallest town in the world“ according to Guinness) and Roč („the Glagolitic capital“). It is about 7 kilometres long and full of symbols, inscriptions and sculptures in the shape of Glagolitic letters – in fact, the whole path is an open-air museum dedicated to Croatia's Glagolitic heritage.",
     "aleja-p2": "The Alley was conceived by Josip Bratulić, sculpturally realised by Želimir Janeš, and named by Zvane Črnja.",
-    "stup-h4": "PILLAR OF THE ČAKAVIAN ASSEMBLY",
+    "stup-h4": "THE PILLAR OF ČAKAVSKI SABOR",
     "stup-p": "The Čakavian Assembly chose the letter <b>S</b> as its emblem, which in Glagolitic looks like an Istrian mushroom. In the Old Slavonic alphabet the letter S is called <i>slovo</i>, a term that denotes several concepts: mind, reason, word, etc.",
-    "stol-h4": "TABLE OF CYRIL AND METHODIUS",
+    "stol-h4": "THE TABLE OF CYRIL AND METHODIUS",
     "stol-p": "<i>Omne trinum perfectum</i> = everything in threes is perfect. Why a table? That is where the family gathers, eats, talks and agrees — it is the place of gathering.",
-    "katedra-h4": "CATHEDRA OF CLEMENT OF OHRID",
+    "katedra-h4": "THE CHAIR OF CLEMENT OF OHRID",
     "katedra-p": "The most interesting fact about this monument is that it stands beneath an oak full of clusters of mistletoe, and from the white mistletoe of the Hum region they make a well-known brandy called <b>biska</b>.",
-    "lap-h4": "GLAGOLITIC LAPIDARIUM",
+    "lap-h4": "THE GLAGOLITIC LAPIDARIUM",
     "lap-p": "In Brnobići, by the little church of Our Lady of the Snows, a drystone wall bears replicas of the 11 oldest Glagolitic inscriptions – from the Baška Tablet to the Valun Tablet.",
-    "klanac-h4": "RAVINE OF THE CROATIAN LUCIDARS",
+    "klanac-h4": "THE GORGE OF THE CROATIAN LUCIDARIUM",
     "klanac-p": "This is actually a monument to the weather forecast of its day. It depicts Mount Učka and the cloud from which the Istrians<br>would read whether it would rain or not.",
-    "vidikovac-h4": "LOOKOUT OF<br>GREGORY OF NIN",
+    "vidikovac-h4": "THE BELVEDERE OF<br>GREGORIUS OF NIN",
     "vidikovac-p": "A large stone block with inscriptions in three scripts: Glagolitic, Cyrillic and Latin. Gregory of Nin was a bishop who introduced worship in the vernacular language.",
-    "uspon-h4": "ASCENT OF THE<br>ISTRIAN DEMARCATION",
+    "uspon-h4": "THE ISTRIAN DEMARCATION<br>ACT RISE",
     "uspon-p": "Stone „stećci“ climb the path writing the words ISTARSKI RAZVOD in Glagolitic – the name of a 1325 document that first mentioned the „Croatian language“ in a legal text.",
-    "zid-h4": "WALL OF CROATIAN<br>PROTESTANTS AND HERETICS",
+    "zid-h4": "THE WALL OF CROATIAN<br>PROTESTANTS AND HERETICS",
     "zid-p": "A drystone wall with names such as Matija Vlačić Ilirik and Marko Antun Dominis – those who in the 16th century printed the Gospel in the vernacular and paid for it. The wall does not defend property, but memory: heretics were often simply those who spoke the truth too loudly.",
-    "odmoriste-h4": "RESTING PLACE OF DEACON JURAJ",
+    "odmoriste-h4": "RESTING-PLACE OF ŽAKAN JURIJ",
     "odmoriste-p": "Eight stone blocks shaped like printing letters spell the name ŽAKN JURI – the man who in 1483 helped publish the first Croatian printed book. The monument is also a bench: after the climb from Roč, you have earned the right to sit and read the inscription VITA VITA / ŠTAMPA NAŠA.",
-    "spomenik-h4": "MONUMENT TO<br>RESISTANCE AND FREEDOM",
+    "spomenik-h4": "THE MONUMENT TO<br>RESISTANCE AND FREEDOM",
     "spomenik-p": "Three stone blocks stacked one upon another symbolise three ages: antiquity, the Middle Ages and the modern age, but a single message: resistance to violence and the longing for freedom are eternal. It was created instead of a planned obelisk when lightning felled a hundred-year-old oak – nature decided that something different was needed here.",
-    "humska-h4": "THE HUM GATE",
+    "humska-h4": "HUM GATES",
     "humska-p": "Heavy copper double doors with handles shaped like the horns of a boškarin ox bear two inscriptions: an old Glagolitic one (<i>I vrata ne zatvoret se v dne...</i>) and a contemporary poem by Vladimir Pernić. Entering the smallest town in the world begins by opening the doors which, according to the inscription, are never locked — except perhaps to the <i>defiled</i>.",
     "footer-1": "MEANDRICA · VARIABLE GLAGOLITIC FONT · TYPE SPECIMEN",
     "footer-2": "© 2026 AMRA LEVAK · University of Rijeka",
@@ -462,4 +463,19 @@
       el.addEventListener("mouseleave", () => meTip.classList.remove("on"));
     });
   });
+
+  /* ---- PHONE: the hover morphs play automatically, on a loop (touch screens have no hover) ---- */
+  if (window.matchMedia("(max-width:600px)").matches || window.matchMedia("(hover:none)").matches) {
+    const pulse = [".big-glyph", ".knifer-word", ".stup-ss", ".vid-istra", ".uspon-word"]
+      .map(s => document.querySelector(s)).filter(Boolean);
+    pulse.forEach((el, i) => {
+      const cycle = () => { el.classList.add("anim"); setTimeout(() => el.classList.remove("anim"), 1500); };
+      setTimeout(() => { cycle(); setInterval(cycle, 3000); }, 700 + i * 350);   // staggered, ~1.5s on / 1.5s off
+    });
+    const hls = [...document.querySelectorAll(".humska-poem .hl")];   // poem: one line BLACK at a time, looping
+    if (hls.length) {
+      let i = 0;
+      setInterval(() => { hls.forEach(h => h.classList.remove("anim")); hls[i].classList.add("anim"); i = (i + 1) % hls.length; }, 1100);
+    }
+  }
 })();

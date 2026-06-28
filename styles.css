@@ -495,6 +495,83 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
   .tester-text{font-size:90px}
   .hero-sub{letter-spacing:.6em;padding-left:.6em}
 }
+/* phone autoplay — same morphs as :hover, driven by a JS-toggled .anim class (only added on phone) */
+.big-glyph.anim .al{font-variation-settings:'wght' 500,'wdth' 10}
+.big-glyph.anim .al:nth-child(2){transition-delay:.15s}
+.big-glyph.anim .al:nth-child(3){transition-delay:.30s}
+.big-glyph.anim .al:nth-child(4){transition-delay:.45s}
+.knifer-word.anim{font-variation-settings:'wght' 500,'wdth' 500}
+.stup-ss.anim .ss-a{font-variation-settings:'wght' 500,'wdth' 1000}
+.stup-ss.anim .ss-b{font-variation-settings:'wght' 500,'wdth' 500}
+.vid-istra.anim{font-variation-settings:'wght' 500,'wdth' 10}
+.uspon-word.anim span:nth-child(1){font-variation-settings:'wght' 500,'wdth' 10}
+.uspon-word.anim span:nth-child(2){font-variation-settings:'wght' 500,'wdth' 143}
+.uspon-word.anim span:nth-child(3){font-variation-settings:'wght' 500,'wdth' 370}
+.uspon-word.anim span:nth-child(4){font-variation-settings:'wght' 500,'wdth' 500}
+.uspon-word.anim span:nth-child(5){font-variation-settings:'wght' 500,'wdth' 654}
+.uspon-word.anim span:nth-child(6){font-variation-settings:'wght' 500,'wdth' 834}
+.uspon-word.anim span:nth-child(7){font-variation-settings:'wght' 500,'wdth' 1000}
+.humska-poem .hl.anim{font-variation-settings:'wght' 500,'wdth' 10}
+
+/* ============ PHONE ============ everything stacks; nothing overlaps; big text stays big & bold */
+@media (max-width:600px){
+  body{overflow-x:hidden}
+  .section{padding:7vh 16px}
+  .frame{min-height:auto;padding-block:6vh}
+
+  /* big / bold lead text stays big & bold on phone */
+  .lead,.about .lead,.glago-lead{font-size:22px;line-height:1.32;font-weight:700;max-width:none}
+  .body{font-size:15px;line-height:1.55;max-width:none}
+
+  /* hero */
+  .hero{min-height:86vh}
+  .hero-title-wrap{height:auto;min-height:24vh;display:flex;align-items:center}
+  .hero-sub{font-size:6.5vw;letter-spacing:.45em;padding-left:.45em}
+  .knifer-word{font-size:24vw;justify-self:start}
+  .about-glyph{justify-content:flex-start;margin-top:8px}
+
+  /* ===== monuments: photo, then Meandrica word, then text — all stacked, no overlap ===== */
+  .klanac-stage,.vid-stage,.ov-stage{display:flex;flex-direction:column;overflow:visible}
+  .klanac-stage>*,.vid-stage>*,.ov-stage>*{position:static!important;left:auto!important;right:auto!important;
+    top:auto!important;bottom:auto!important;transform:none!important;width:100%;max-width:none;margin:0}
+  .olinfos,.vid-istra,.uspon-word,.humska-poem{margin-top:14px!important;justify-content:center;text-align:center;align-items:center}
+  .mon-cap.klanac-cap,.mon-cap.zid-cap,.vid-cap,.mon-cap.ov-cap-tl,.humska-cap{margin-top:18px!important;text-shadow:none!important;max-width:none!important}
+
+  .vid-photo{width:100%!important;margin:0!important}
+  .vid-istra{font-size:30vw!important;line-height:.9}
+  .uspon-mon .ov-stage,.zid-mon .ov-stage{aspect-ratio:auto}
+  .uspon-mon .ov-stage>img,.zid-crop>img{height:auto!important;object-fit:contain!important}
+  .humska-crop{aspect-ratio:auto}.humska-crop>img{height:auto!important;object-fit:contain!important}
+
+  /* STUP: scroll reveal -> SS -> text */
+  .monument.stup{grid-template-columns:1fr;gap:16px}
+  .stup-ss{justify-content:flex-start}
+
+  /* KATEDRA: full-bleed -> stacked */
+  .monument.katedra-mon{width:100%;margin:7vh 0;min-height:auto;display:block;grid-template-columns:none}
+  .monument.katedra-mon>img{height:auto!important;width:100%;max-width:100%;margin:0}
+  .monument.katedra-mon .mon-cap{position:static;width:100%;right:auto;top:auto;margin-top:18px}
+
+  /* LAP-AXES (GLAGOLJATI) */
+  .lap-stage{height:auto;aspect-ratio:16/11}
+  .lap-glag{font-size:18vw}
+  .lap-ctrl{position:static;flex-direction:row;justify-content:center;margin-top:12px;top:auto;right:auto}
+
+  /* SPOMENIK / ODMORIŠTE stack */
+  .sfsn-mon{grid-template-columns:1fr;gap:16px}
+  .sfsn-photo,.sfsn-word,.sfsn-cap{grid-column:auto!important;text-align:left}
+  .sfsn-word{font-size:22vw}
+  .odm-row{grid-template-columns:1fr;gap:14px}
+  .odm-cap{max-width:none}
+  .odm-marquee-track{font-size:14vw}
+
+  /* MAP / TESTER / MERCH */
+  .aleja-map{margin-top:24px}
+  .tester-text{font-size:64px}
+  .tester-controls{gap:16px}
+  .merch-grid{gap:18px}
+}
+
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
   *{scroll-behavior:auto}
