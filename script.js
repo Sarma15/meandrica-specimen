@@ -38,23 +38,41 @@
     const gpGlyph = document.getElementById("gpGlyph");
     const gpLab = document.getElementById("gpLab");
     if (preview && gpGlyph) {
-      grid.addEventListener("mouseover", (e) => {
-        const g = e.target.closest(".glyph-cell") && e.target.closest(".glyph-cell").querySelector(".gly");
-        if (!g) return;
+      const showGlyph = (g) => {
         gpGlyph.textContent = g.textContent;
         gpGlyph.style.fontVariationSettings = g.style.fontVariationSettings || "'wght' 500,'wdth' 500";
         if (gpLab) gpLab.textContent = g.textContent;
         preview.classList.add("on");
-      });
-      grid.addEventListener("mousemove", (e) => {
-        const w = preview.offsetWidth, h = preview.offsetHeight;
-        let x = e.clientX + 26, y = e.clientY - h / 2;
-        x = Math.min(x, window.innerWidth - w - 12);
-        y = Math.max(12, Math.min(y, window.innerHeight - h - 12));
-        preview.style.left = x + "px";
-        preview.style.top = y + "px";
-      });
-      grid.addEventListener("mouseleave", () => preview.classList.remove("on"));
+      };
+      const touch = window.matchMedia("(hover:none)").matches || window.matchMedia("(max-width:600px)").matches;
+      if (touch) {
+        // phone: tap a letter to open it (centered), tap anywhere else to close
+        grid.addEventListener("click", (e) => {
+          const cell = e.target.closest(".glyph-cell");
+          if (!cell) return;
+          showGlyph(cell.querySelector(".gly"));
+          const w = preview.offsetWidth, h = preview.offsetHeight;
+          preview.style.left = Math.max(8, (window.innerWidth - w) / 2) + "px";
+          preview.style.top = Math.max(8, (window.innerHeight - h) / 2) + "px";
+          e.stopPropagation();
+        });
+        document.addEventListener("click", () => preview.classList.remove("on"));
+      } else {
+        grid.addEventListener("mouseover", (e) => {
+          const g = e.target.closest(".glyph-cell") && e.target.closest(".glyph-cell").querySelector(".gly");
+          if (!g) return;
+          showGlyph(g);
+        });
+        grid.addEventListener("mousemove", (e) => {
+          const w = preview.offsetWidth, h = preview.offsetHeight;
+          let x = e.clientX + 26, y = e.clientY - h / 2;
+          x = Math.min(x, window.innerWidth - w - 12);
+          y = Math.max(12, Math.min(y, window.innerHeight - h - 12));
+          preview.style.left = x + "px";
+          preview.style.top = y + "px";
+        });
+        grid.addEventListener("mouseleave", () => preview.classList.remove("on"));
+      }
     }
   }
 
@@ -243,6 +261,91 @@
     syncTester(T.text, testerTag);
   }
 
+  /* ---- TYPE TESTER: download the typed Meandrica word as a JPG (black bg, tight 10px margin) ---- */
+  let fontB64 = null;
+  async function getFontB64() {
+    if (fontB64) return fontB64;
+    const buf = await (await fetch("fonts/MeandricaVF.ttf")).arrayBuffer();
+    let bin = ""; const bytes = new Uint8Array(buf);
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return (fontB64 = btoa(bin));
+  }
+  const dlJpgBtn = document.getElementById("testerDl");
+  if (dlJpgBtn && T.text) {
+    // measure the typed text at its natural (no-wrap) size with the live font
+    function measureText(text, w, size, lh) {
+      const m = document.createElement("div");
+      m.style.cssText = "position:absolute;left:-99999px;top:0;display:inline-block;margin:0;padding:0;" +
+        "font-family:'Meandrica';font-weight:500;font-variation-settings:'wght' 500,'wdth' " + w + ";" +
+        "font-size:" + size + "px;line-height:" + lh + ";text-transform:uppercase;white-space:pre;";
+      m.textContent = text;
+      document.body.appendChild(m);
+      const r = { w: m.offsetWidth || 1, h: m.offsetHeight || 1 };
+      document.body.removeChild(m);
+      return r;
+    }
+    dlJpgBtn.addEventListener("click", async () => {
+      const b64 = await getFontB64();
+      const w = +T.varR.value, size = +T.sizeR.value, lh = +T.leadR.value / 100;
+      const text = (T.text.innerText || "MEANDRICA").toUpperCase();
+      const esc = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const m = measureText(text, w, size, lh);
+      // render the vector text big so it rasterises crisp (letters ~>3000px tall), capped for memory
+      const PADD = 30;                                            // design padding (room for ink overflow + margin)
+      let F = 4500 / m.h;
+      F = Math.min(F, 9000 / (m.w + PADD * 2), 9000 / (m.h + PADD * 2));
+      const cw = Math.ceil((m.w + PADD * 2) * F), ch = Math.ceil((m.h + PADD * 2) * F);
+      const div = "<div xmlns='http://www.w3.org/1999/xhtml' style=\"font-family:'MeandricaDL';font-weight:500;" +
+        "font-variation-settings:'wght' 500,'wdth' " + w + ";font-size:" + (size * F) + "px;line-height:" + lh + ";" +
+        "color:#fff;text-transform:uppercase;white-space:pre;display:inline-block;padding:" + (PADD * F) + "px;margin:0;\">" + esc + "</div>";
+      const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + cw + "' height='" + ch + "'>" +
+        "<defs><style>@font-face{font-family:'MeandricaDL';src:url(data:font/ttf;base64," + b64 + ") format('truetype');}</style></defs>" +
+        "<foreignObject x='0' y='0' width='100%' height='100%'>" + div + "</foreignObject></svg>";
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement("canvas");
+        c.width = cw; c.height = ch;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = "#000"; ctx.fillRect(0, 0, cw, ch);
+        ctx.drawImage(img, 0, 0);
+        let minX = cw, minY = ch, maxX = 0, maxY = 0, found = false;
+        try {
+          const d = ctx.getImageData(0, 0, cw, ch).data;
+          for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
+            const i = (y * cw + x) * 4;
+            if (d[i] > 40 || d[i + 1] > 40 || d[i + 2] > 40) {
+              found = true;
+              if (x < minX) minX = x; if (x > maxX) maxX = x;
+              if (y < minY) minY = y; if (y > maxY) maxY = y;
+            }
+          }
+        } catch (e) { found = false; }
+        if (!found) { minX = 0; minY = 0; maxX = cw - 1; maxY = ch - 1; }
+        const inkW = maxX - minX + 1, inkH = maxY - minY + 1;
+        const mar = Math.round(inkH * 0.06);                       // black margin ~6% of letter height, all sides
+        const cropX = Math.max(0, minX - mar), cropY = Math.max(0, minY - mar);
+        const cropW = Math.min(cw - cropX, inkW + mar * 2), cropH = Math.min(ch - cropY, inkH + mar * 2);
+        // output: height ALWAYS 3000, width proportional to the text
+        let outH = 3000, outW = Math.max(1, Math.round(3000 * cropW / cropH));
+        if (outW > 16000) { outH = Math.round(3000 * 16000 / outW); outW = 16000; }   // browser canvas limit
+        const out = document.createElement("canvas");
+        out.width = outW; out.height = outH;
+        const o = out.getContext("2d");
+        o.imageSmoothingEnabled = true; o.imageSmoothingQuality = "high";
+        o.fillStyle = "#000"; o.fillRect(0, 0, outW, outH);
+        o.drawImage(c, cropX, cropY, cropW, cropH, 0, 0, outW, outH);
+        out.toBlob((blob) => {
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "meandrica.jpg";
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+        }, "image/jpeg", 0.95);
+      };
+      img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    });
+  }
+
   /* ---- KATEDRA: loop through 3 photos, 0.5s each ---- */
   const katedraImg = document.getElementById("katedraImg");
   if (katedraImg) {
@@ -413,6 +516,18 @@
     });
   }
 
+  /* ---- personalised-merch info popup ---- */
+  const merchInfo = document.getElementById("merchInfo");
+  const merchModal = document.getElementById("merchModal");
+  if (merchInfo && merchModal) {
+    const close = () => { merchModal.hidden = true; };
+    merchInfo.addEventListener("click", () => { merchModal.hidden = false; });
+    const mClose = document.getElementById("merchModalClose");
+    if (mClose) mClose.addEventListener("click", close);
+    merchModal.addEventListener("click", (e) => { if (e.target === merchModal) close(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  }
+
   /* ---- MAP: custom circle cursor that grows over a clickable monument ---- */
   const alejaMap = document.querySelector(".aleja-map");
   if (alejaMap) {
@@ -466,6 +581,11 @@
 
   /* ---- PHONE: the hover morphs play automatically, on a loop (touch screens have no hover) ---- */
   if (window.matchMedia("(max-width:600px)").matches || window.matchMedia("(hover:none)").matches) {
+    // lapidarij: lift the REGULAR/LOW/BLACK controls out of the photo to sit below it
+    const lapStage = document.querySelector(".lap-stage");
+    const lapCtrl = document.querySelector(".lap-ctrl");
+    if (lapStage && lapCtrl) lapStage.after(lapCtrl);
+
     const pulse = [".big-glyph", ".knifer-word", ".stup-ss", ".vid-istra", ".uspon-word"]
       .map(s => document.querySelector(s)).filter(Boolean);
     pulse.forEach((el, i) => {

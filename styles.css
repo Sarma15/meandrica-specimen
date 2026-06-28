@@ -429,6 +429,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:0;background:var(--accent)}
 .tester-tag{font-size:15px;letter-spacing:.2em;color:#bdbdbd;margin-bottom:16px;font-weight:600;
   display:inline-block;cursor:text;outline:none;border-bottom:1px dashed #444;padding-bottom:3px}
+.tester-tag::before{content:"";display:inline-block;width:13px;height:13px;margin-right:9px;vertical-align:-1px;opacity:.9;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239a9a9a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E") no-repeat center/contain}
 .tester-tag:focus{color:#fff;border-bottom-color:var(--accent)}
 .tester-cta{margin:6vh auto 0}
 .tester-stage{min-height:30vh;display:flex;align-items:center}
@@ -439,6 +441,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
 }
 .tester-credit{font-size:12px;letter-spacing:.2em;color:var(--dim);margin-top:5vh;text-align:right}
 .dl-count{text-align:center;margin-top:16px;font-size:11px;letter-spacing:.22em;color:var(--dim);font-weight:600}
+.tester-dl{display:block;margin:34px auto 0;background:none;border:1.5px solid var(--fg);color:var(--fg);
+  font-family:var(--ui);font-size:12px;letter-spacing:.18em;font-weight:600;text-transform:uppercase;
+  padding:14px 32px;cursor:pointer;transition:background .2s,color .2s}
+.tester-dl:hover{background:var(--accent);border-color:var(--accent);color:#000}
 
 /* MERCH */
 .merch{position:relative;overflow:hidden}
@@ -453,9 +459,25 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
 .merch-grid figure:hover{transform:translateY(-10px) scale(1.02)}        /* every card pops up on hover */
 .merch-grid img{width:100%;aspect-ratio:1;object-fit:cover}
 .merch-grid figcaption{font-size:11px;letter-spacing:.2em;padding:14px;color:var(--dim);font-weight:600}
-.merch-custom{display:block;text-align:center;margin-top:30px;font-size:12px;letter-spacing:.16em;
+.merch-custom-row{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:30px}
+.merch-custom{font-size:12px;letter-spacing:.16em;
   text-transform:uppercase;font-weight:600;color:var(--dim);text-decoration:none;transition:color .2s}
 .merch-custom:hover{color:#fff;text-decoration:underline}
+.merch-info{flex:none;width:18px;height:18px;border-radius:50%;border:1.4px solid var(--dim);background:none;
+  color:var(--dim);font-family:var(--ui);font-size:11px;font-style:italic;font-weight:700;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;transition:color .2s,border-color .2s}
+.merch-info:hover{color:#fff;border-color:#fff}
+.info-modal{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.8);padding:24px}
+.info-modal[hidden]{display:none}
+.info-box{position:relative;max-width:440px;background:#0a0a0a;border:1px solid var(--accent);padding:42px 34px 34px}
+.info-box p{font-size:14px;line-height:1.6;color:#e8e8e8}
+.info-mail{display:inline-block;margin-top:18px;font-size:13px;letter-spacing:.06em;font-weight:600;
+  color:var(--accent);text-decoration:none}
+.info-mail:hover{text-decoration:underline}
+.info-close{position:absolute;top:6px;right:13px;background:none;border:0;color:var(--dim);
+  font-size:26px;line-height:1;cursor:pointer;transition:color .2s}
+.info-close:hover{color:#fff}
 .kupi{
   color:var(--accent);font-size:clamp(40px,8vw,120px);text-align:center;
   margin:9vh 0 5vh;font-variation-settings:'wght' 500,'wdth' 140;line-height:.9;
@@ -526,41 +548,48 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
   /* hero */
   .hero{min-height:86vh}
   .hero-title-wrap{height:auto;min-height:24vh;display:flex;align-items:center}
-  .hero-sub{font-size:6.5vw;letter-spacing:.45em;padding-left:.45em}
-  .knifer-word{font-size:24vw;justify-self:start}
+  .hero-sub{font-size:4.2vw;letter-spacing:.4em;padding-left:.4em}
+  .knifer-word{font-size:32vw;justify-self:start}
   .about-glyph{justify-content:flex-start;margin-top:8px}
 
-  /* ===== monuments: photo, then Meandrica word, then text — all stacked, no overlap ===== */
-  .klanac-stage,.vid-stage,.ov-stage{display:flex;flex-direction:column;overflow:visible}
-  .klanac-stage>*,.vid-stage>*,.ov-stage>*{position:static!important;left:auto!important;right:auto!important;
-    top:auto!important;bottom:auto!important;transform:none!important;width:100%;max-width:none;margin:0}
-  .olinfos,.vid-istra,.uspon-word,.humska-poem{margin-top:14px!important;justify-content:center;text-align:center;align-items:center}
-  .mon-cap.klanac-cap,.mon-cap.zid-cap,.vid-cap,.mon-cap.ov-cap-tl,.humska-cap{margin-top:18px!important;text-shadow:none!important;max-width:none!important}
-
-  .vid-photo{width:100%!important;margin:0!important}
-  .vid-istra{font-size:30vw!important;line-height:.9}
-  .uspon-mon .ov-stage,.zid-mon .ov-stage{aspect-ratio:auto}
-  .uspon-mon .ov-stage>img,.zid-crop>img{height:auto!important;object-fit:contain!important}
-  .humska-crop{aspect-ratio:auto}.humska-crop>img{height:auto!important;object-fit:contain!important}
+  /* ===== klanac / vidikovac / uspon / zid / humska: the Meandrica word stays OVER the photo (like desktop) ===== */
+  /* captions sit on the photo but trimmed so they fit the narrow screen */
+  .klanac-cap,.vid-cap,.zid-cap,.uspon-mon .ov-cap-tl,.humska-cap{max-width:64%}
+  .klanac-cap h4,.vid-cap h4,.zid-cap h4,.uspon-mon .ov-cap-tl h4,.humska-cap h4{font-size:9px;margin-bottom:6px}
+  .klanac-cap p,.vid-cap p,.zid-cap p,.uspon-mon .ov-cap-tl p,.humska-cap p{font-size:10px;line-height:1.38}
+  /* vidikovac: bigger photo, less right-offset so the huge ISTRA fits beside it */
+  .vid-photo{width:100%;margin-left:12%}
+  .vid-istra{font-size:clamp(120px,30vw,210px);top:30%}
+  .vid-cap{top:64%}
+  /* zid: gif full-bleed (edge to edge), bigger */
+  .zid-mon .ov-stage{width:100vw;margin-left:calc(50% - 50vw)}
+  .zid-cap{left:16px}
 
   /* STUP: scroll reveal -> SS -> text */
   .monument.stup{grid-template-columns:1fr;gap:16px}
-  .stup-ss{justify-content:flex-start}
+  .stup-ss{justify-content:flex-start;margin-top:40px}
 
   /* KATEDRA: full-bleed -> stacked */
   .monument.katedra-mon{width:100%;margin:7vh 0;min-height:auto;display:block;grid-template-columns:none}
   .monument.katedra-mon>img{height:auto!important;width:100%;max-width:100%;margin:0}
   .monument.katedra-mon .mon-cap{position:static;width:100%;right:auto;top:auto;margin-top:18px}
 
-  /* LAP-AXES (GLAGOLJATI) */
+  /* LAP-AXES: GLAGOLJATI on the photo; REGULAR/LOW/BLACK row moved BELOW the photo (JS) */
   .lap-stage{height:auto;aspect-ratio:16/11}
   .lap-glag{font-size:18vw}
-  .lap-ctrl{position:static;flex-direction:row;justify-content:center;margin-top:12px;top:auto;right:auto}
+  .lap-axes .lap-ctrl{position:static;flex-direction:row;justify-content:center;align-items:center;
+    gap:30px;margin-top:18px;top:auto;right:auto}
+  .lap-axes .lap-ctrl button{font-size:14px;padding:6px 0}
 
-  /* SPOMENIK / ODMORIŠTE stack */
-  .sfsn-mon{grid-template-columns:1fr;gap:16px}
-  .sfsn-photo,.sfsn-word,.sfsn-cap{grid-column:auto!important;text-align:left}
-  .sfsn-word{font-size:22vw}
+  /* SPOMENIK: blinking word OVER the photo, caption below */
+  .sfsn-mon{display:block;position:relative;gap:0}
+  .sfsn-photo{width:100%;grid-column:auto}
+  .sfsn-word{position:absolute;top:0;left:0;width:100%;aspect-ratio:1718/1890;grid-column:auto;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+    font-size:16vw;line-height:.94}
+  .sfsn-cap{position:static;grid-column:auto;text-align:left;margin-top:20px}
+
+  /* ODMORIŠTE stays stacked */
   .odm-row{grid-template-columns:1fr;gap:14px}
   .odm-cap{max-width:none}
   .odm-marquee-track{font-size:14vw}

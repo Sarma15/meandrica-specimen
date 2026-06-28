@@ -300,6 +300,7 @@
   <div class="tester-stage">
     <div class="tester-text" id="testerText" contenteditable="true" spellcheck="false">MANEŠTRA</div>
   </div>
+  <button class="tester-dl reveal" id="testerDl" type="button">DOWNLOAD JPG</button>
   <a class="cta tester-cta reveal" href="#merch">GET THIS ON A TOTE</a>
 </section>
 
@@ -311,8 +312,19 @@
     <figure class="reveal mid"><img src="assets/mockup-tee.png" alt="Meandrica LIPO SI GRD t-shirt" /><figcaption>TEE — LIPO SI GRD, 30 €</figcaption></figure>
     <figure class="reveal"><img src="assets/mockup-olinfos.png" alt="Meandrica OLINFOS tote bag" /><figcaption>TOTE — OLINFOS, 20 €</figcaption></figure>
   </div>
-  <a class="merch-custom reveal" href="mailto:alevak@uniri.hr?subject=Personalised%20Meandrica%20merch">…or get personalised merch</a>
+  <div class="merch-custom-row reveal">
+    <a class="merch-custom" href="mailto:meandrika.shop@gmail.com?subject=Personalised%20Meandrica%20merch">…or get personalised merch</a>
+    <button class="merch-info" id="merchInfo" type="button" aria-label="How personalised merch works">i</button>
+  </div>
   <a class="cta reveal" href="fonts/MeandricaVF.ttf" download="Meandrica.otf" id="getfontCta">DOWNLOAD FONT</a>
+
+  <div class="info-modal" id="merchModal" hidden>
+    <div class="info-box">
+      <button class="info-close" id="merchModalClose" type="button" aria-label="Close">×</button>
+      <p>In the type tester, make your design, then send us the downloaded .jpg. We'll send you payment info, and upon receiving payment confirmation we'll send you your personalised tote or t-shirt!</p>
+      <a class="info-mail" href="mailto:meandrika.shop@gmail.com?subject=Personalised%20Meandrica%20merch">meandrika.shop@gmail.com</a>
+    </div>
+  </div>
 </section>
 
 <footer class="footer">
