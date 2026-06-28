@@ -586,6 +586,15 @@
     const lapCtrl = document.querySelector(".lap-ctrl");
     if (lapStage && lapCtrl) lapStage.after(lapCtrl);
 
+    // klanac / uspon / zid / humska: drop the Latin caption below the photo (the Meandrica word stays over it)
+    [["#m-klanac .klanac-stage", "#m-klanac .klanac-cap"],
+     ["#m-uspon .ov-stage", "#m-uspon .ov-cap-tl"],
+     ["#m-zid .ov-stage", "#m-zid .zid-cap"],
+     ["#m-humska .ov-stage", "#m-humska .humska-cap"]].forEach(([stageSel, capSel]) => {
+      const stage = document.querySelector(stageSel), cap = document.querySelector(capSel);
+      if (stage && cap) stage.after(cap);
+    });
+
     const pulse = [".big-glyph", ".knifer-word", ".stup-ss", ".vid-istra", ".uspon-word"]
       .map(s => document.querySelector(s)).filter(Boolean);
     pulse.forEach((el, i) => {

@@ -552,18 +552,21 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
   .knifer-word{font-size:32vw;justify-self:start}
   .about-glyph{justify-content:flex-start;margin-top:8px}
 
-  /* ===== klanac / vidikovac / uspon / zid / humska: the Meandrica word stays OVER the photo (like desktop) ===== */
-  /* captions sit on the photo but trimmed so they fit the narrow screen */
-  .klanac-cap,.vid-cap,.zid-cap,.uspon-mon .ov-cap-tl,.humska-cap{max-width:64%}
-  .klanac-cap h4,.vid-cap h4,.zid-cap h4,.uspon-mon .ov-cap-tl h4,.humska-cap h4{font-size:9px;margin-bottom:6px}
-  .klanac-cap p,.vid-cap p,.zid-cap p,.uspon-mon .ov-cap-tl p,.humska-cap p{font-size:10px;line-height:1.38}
-  /* vidikovac: bigger photo, less right-offset so the huge ISTRA fits beside it */
-  .vid-photo{width:100%;margin-left:12%}
-  .vid-istra{font-size:clamp(120px,30vw,210px);top:30%}
-  .vid-cap{top:64%}
+  /* ===== klanac / uspon / zid / humska: Meandrica word stays OVER the photo; Latin caption drops BELOW (moved by JS) ===== */
+  .klanac-cap,.uspon-mon .ov-cap-tl,#m-zid .zid-cap,#m-humska .humska-cap{
+    position:static;max-width:none;margin-top:18px;text-shadow:none;left:auto;right:auto;top:auto;bottom:auto}
+  .klanac-cap h4,.uspon-mon .ov-cap-tl h4,#m-zid .zid-cap h4,#m-humska .humska-cap h4{font-size:11px;margin-bottom:8px}
+  .klanac-cap p,.uspon-mon .ov-cap-tl p,#m-zid .zid-cap p,#m-humska .humska-cap p{font-size:13px;line-height:1.5}
+
+  /* vidikovac: bigger photo + ISTRA; caption stays over the photo in a 2x-narrower box */
+  .vid-photo{width:118%;margin-left:-9%}
+  .vid-istra{font-size:clamp(150px,40vw,280px);top:24%}
+  .vid-cap{max-width:32%;top:60%}
+  .vid-cap h4{font-size:9px;margin-bottom:6px}
+  .vid-cap p{font-size:9.5px;line-height:1.34}
+
   /* zid: gif full-bleed (edge to edge), bigger */
   .zid-mon .ov-stage{width:100vw;margin-left:calc(50% - 50vw)}
-  .zid-cap{left:16px}
 
   /* STUP: scroll reveal -> SS -> text */
   .monument.stup{grid-template-columns:1fr;gap:16px}
@@ -574,19 +577,19 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
   .monument.katedra-mon>img{height:auto!important;width:100%;max-width:100%;margin:0}
   .monument.katedra-mon .mon-cap{position:static;width:100%;right:auto;top:auto;margin-top:18px}
 
-  /* LAP-AXES: GLAGOLJATI on the photo; REGULAR/LOW/BLACK row moved BELOW the photo (JS) */
+  /* LAP-AXES: GLAGOLJATI bigger on the photo; REGULAR/LOW/BLACK in a left-aligned column below */
   .lap-stage{height:auto;aspect-ratio:16/11}
-  .lap-glag{font-size:18vw}
-  .lap-axes .lap-ctrl{position:static;flex-direction:row;justify-content:center;align-items:center;
-    gap:30px;margin-top:18px;top:auto;right:auto}
-  .lap-axes .lap-ctrl button{font-size:14px;padding:6px 0}
+  .lap-glag{font-size:24vw}
+  .lap-axes .lap-ctrl{position:static;flex-direction:column;align-items:flex-start;justify-content:flex-start;
+    gap:9px;margin-top:18px;top:auto;right:auto}
+  .lap-axes .lap-ctrl button{font-size:15px;padding:3px 0;text-align:left}
 
   /* SPOMENIK: blinking word OVER the photo, caption below */
   .sfsn-mon{display:block;position:relative;gap:0}
   .sfsn-photo{width:100%;grid-column:auto}
   .sfsn-word{position:absolute;top:0;left:0;width:100%;aspect-ratio:1718/1890;grid-column:auto;
     display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
-    font-size:16vw;line-height:.94}
+    font-size:19.2vw;line-height:.94}
   .sfsn-cap{position:static;grid-column:auto;text-align:left;margin-top:20px}
 
   /* ODMORIŠTE stays stacked */
