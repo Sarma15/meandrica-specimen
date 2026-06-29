@@ -237,7 +237,7 @@ code{font-family:ui-monospace,monospace;color:var(--accent);font-size:.9em}
   align-items:end;
   grid-template-columns:minmax(0,525px) 1fr;   /* reveal ~25% bigger */
   min-height:100vh;align-content:end;
-  padding-bottom:13vh;margin:0 0 30vh;
+  padding-bottom:13vh;margin:0 0 16vh;
 }
 .stup-side{display:flex;flex-direction:column;gap:32px}
 .stup-ss{display:flex;gap:0;line-height:.8;width:max-content}
@@ -411,7 +411,7 @@ code{font-family:ui-monospace,monospace;color:var(--accent);font-size:.9em}
 }
 
 /* TESTER */
-.tester{background:#050505}
+.tester{background:var(--bg)}
 .tester-controls{
   display:flex;flex-wrap:wrap;gap:30px 44px;align-items:flex-end;
   border-bottom:1px solid var(--line);padding-bottom:26px;margin-bottom:6vh;
@@ -558,10 +558,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
   .klanac-cap h4,.uspon-mon .ov-cap-tl h4,#m-zid .zid-cap h4,#m-humska .humska-cap h4{font-size:11px;margin-bottom:8px}
   .klanac-cap p,.uspon-mon .ov-cap-tl p,#m-zid .zid-cap p,#m-humska .humska-cap p{font-size:13px;line-height:1.5}
 
-  /* vidikovac: bigger photo + ISTRA; caption stays over the photo in a 2x-narrower box */
-  .vid-photo{width:118%;margin-left:-9%}
-  .vid-istra{font-size:clamp(150px,40vw,280px);top:24%}
-  .vid-cap{max-width:32%;top:60%}
+  /* vidikovac: photo to the RIGHT; ISTRA + caption in the clear left area (no overlap with the photo) */
+  .vid-photo{width:80%;margin-left:30%}
+  .vid-istra{font-size:clamp(130px,34vw,230px);top:20%;left:0}
+  .vid-cap{left:0;max-width:27%;top:58%}
   .vid-cap h4{font-size:9px;margin-bottom:6px}
   .vid-cap p{font-size:9.5px;line-height:1.34}
 
