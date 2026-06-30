@@ -251,7 +251,8 @@
     T.leadV.textContent = l.toFixed(2);
   }
   const testerTag = document.getElementById("testerTag");
-  function syncTester(src, dst) { if (src && dst) dst.textContent = (src.textContent || "").toUpperCase(); }
+  // innerText (not textContent) so Enter / new lines carry across to the other field too
+  function syncTester(src, dst) { if (src && dst) dst.innerText = (src.innerText || "").toUpperCase(); }
   if (T.text) {
     T.style.addEventListener("change", () => { T.varR.value = T.style.value; applyTester(); });
     [T.varR, T.sizeR, T.leadR].forEach(r => r.addEventListener("input", applyTester));
@@ -287,7 +288,7 @@
     dlJpgBtn.addEventListener("click", async () => {
       const b64 = await getFontB64();
       const w = +T.varR.value, size = +T.sizeR.value, lh = +T.leadR.value / 100;
-      const text = (T.text.innerText || "MEANDRICA").toUpperCase();
+      const text = (T.text.innerText || "MEANDRIKA").toUpperCase();
       const esc = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       const m = measureText(text, w, size, lh);
       // render the vector text big so it rasterises crisp (letters ~>3000px tall), capped for memory
@@ -337,7 +338,7 @@
         out.toBlob((blob) => {
           const a = document.createElement("a");
           a.href = URL.createObjectURL(blob);
-          a.download = "meandrica.jpg";
+          a.download = "meandrika.jpg";
           a.click();
           setTimeout(() => URL.revokeObjectURL(a.href), 1500);
         }, "image/jpeg", 0.95);
@@ -453,10 +454,10 @@
   /* ---- LANGUAGE TOGGLE: HR <-> ENG (swaps Latin-script text; Meandrica glyphs stay) ---- */
   let meLang = "hr";
   const EN = {
-    "about-lead": "Meandrica is a Glagolitic variable font inspired by the meanders of Julije Knifer — a Croatian artist whose monochrome meanders became a symbol of the conceptual art of the second half of the 20th century.",
-    "about-p2": "Meandrica has three styles and two axes of variability — height and contrast. This gives the user complete control over their design. The font is shown off best when you take it a step further and use animation to reveal its dynamics and variability — everything that the Glagolitic script as we knew it could not offer before.",
+    "about-lead": "Meandrika is a Glagolitic variable font inspired by the meanders of Julije Knifer — a Croatian artist whose monochrome meanders became a symbol of the conceptual art of the second half of the 20th century.",
+    "about-p2": "Meandrika has three styles and two axes of variability — height and contrast. This gives the user complete control over their design. The font is shown off best when you take it a step further and use animation to reveal its dynamics and variability — everything that the Glagolitic script as we knew it could not offer before.",
     "about-p3": "It supports only the Croatian language, as one of the few languages whose writing once made use of the Glagolitic script.",
-    "knifer-body": "Like Knifer's meanders, Meandrica explores the possibilities of rhythm in continuous forms and contrast. Legibility is reduced, but since the Glagolitic script has long been out of practical use, this flaw can only bother historians and archaeologists. So the question arises — is Meandrica a font at all, or is it actually a visual performance in the form of an .otf file?",
+    "knifer-body": "Like Knifer's meanders, Meandrika explores the possibilities of rhythm in continuous forms and contrast. Legibility is reduced, but since the Glagolitic script has long been out of practical use, this flaw can only bother historians and archaeologists. So the question arises — is Meandrika a font at all, or is it actually a visual performance in the form of an .otf file?",
     "glago-lead": "Glagolitic is an alphabet created in the mid-9th century after the model of Greek, originally conceived for the phonetically precise rendering of Old Church Slavonic and the Slavic vernaculars in the context of the Christian mission among the Slavic peoples.",
     "glago-p1": "Angular Glagolitic is a later variant of the original, rounded Glagolitic. The same alphabet, but with sharp angles.",
     "glago-p2": "It developed from the rounded form during the 12th and 13th centuries, when priests in the area of present-day Croatia (especially in Istria and the Kvarner) began to write faster, more practically and on poorer paper, turning the rounded lines into straight ones.",
@@ -486,7 +487,7 @@
     "spomenik-p": "Three stone blocks stacked one upon another symbolise three ages: antiquity, the Middle Ages and the modern age, but a single message: resistance to violence and the longing for freedom are eternal. It was created instead of a planned obelisk when lightning felled a hundred-year-old oak – nature decided that something different was needed here.",
     "humska-h4": "HUM GATES",
     "humska-p": "Heavy copper double doors with handles shaped like the horns of a boškarin ox bear two inscriptions: an old Glagolitic one (<i>I vrata ne zatvoret se v dne...</i>) and a contemporary poem by Vladimir Pernić. Entering the smallest town in the world begins by opening the doors which, according to the inscription, are never locked — except perhaps to the <i>defiled</i>.",
-    "footer-1": "MEANDRICA · VARIABLE GLAGOLITIC FONT · TYPE SPECIMEN",
+    "footer-1": "MEANDRIKA · VARIABLE GLAGOLITIC FONT · TYPE SPECIMEN",
     "footer-2": "© 2026 AMRA LEVAK · University of Rijeka",
     "lap-tip": "GLAGOLJATI = TO SPEAK",
     "hl-1": "THE GATES DO NOT CLOSE BY DAY",
