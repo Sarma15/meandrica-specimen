@@ -82,17 +82,9 @@
   }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
   document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-  /* ---- scroll-spy side nav ---- */
+  /* ---- scroll-spy side nav (scroll-position based, so it's correct scrolling up AND down) ---- */
   const sideLinks = [...document.querySelectorAll(".sidenav a")];
   const spyTargets = sideLinks.map(a => document.getElementById(a.dataset.target)).filter(Boolean);
-  const spy = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        sideLinks.forEach(l => l.classList.toggle("active", l.dataset.target === e.target.id));
-      }
-    });
-  }, { rootMargin: "-45% 0px -45% 0px" });
-  spyTargets.forEach(t => spy.observe(t));
 
   /* ---- elements driven by scroll ---- */
   const progress = document.getElementById("progress");
@@ -105,6 +97,9 @@
   const mapScroll = document.getElementById("mapScroll");
   const mapImg = document.getElementById("mapImg");
   const morphGlyphs = [...document.querySelectorAll(".morph-glyph")];
+  // touch/mobile: the map has no hover, so names reveal by scroll position instead
+  const isTouch = window.matchMedia("(hover:none)").matches || window.matchMedia("(max-width:880px)").matches;
+  const mapHots = isTouch ? [...document.querySelectorAll(".aleja-map .map-hot")] : [];
   const trailLen = trailLine ? trailLine.getTotalLength() : 0;
   if (trailLine) { trailLine.style.strokeDasharray = trailLen; trailLine.style.strokeDashoffset = trailLen; }
 
@@ -120,6 +115,14 @@
 
     // progress bar
     if (progress) progress.style.width = (clamp(scrollY / docH, 0, 1) * 100) + "%";
+
+    // scroll-spy: the last section whose top has crossed the reference line is the active one (works both directions)
+    if (spyTargets.length) {
+      const refY = vh * 0.4;
+      let activeId = spyTargets[0].id;
+      for (const t of spyTargets) { if (t.getBoundingClientRect().top <= refY) activeId = t.id; }
+      sideLinks.forEach(l => l.classList.toggle("active", l.dataset.target === activeId));
+    }
 
     // hero word stays REGULAR & fixed-size; only a gentle fade as you scroll away
     if (hero && heroWord) {
@@ -150,6 +153,16 @@
       const center = r.top + r.height / 2;        // reveal plays in the lower third of the screen
       const p = clamp(0.5 + (vh * 0.72 - center) / (vh * 0.4), 0, 1);  // half-revealed at ~72% down
       stupAction.style.clipPath = "inset(0 0 " + ((1 - p) * 100).toFixed(1) + "% 0)";
+    }
+
+    // MAP (touch): reveal a monument's name while its hotspot sits in the middle band
+    if (mapHots.length) {
+      const top = vh * 0.28, bot = vh * 0.66;
+      for (const h of mapHots) {
+        const r = h.getBoundingClientRect();
+        const c = r.top + r.height / 2;
+        h.classList.toggle("show", c > top && c < bot);
+      }
     }
 
     // each .morph-glyph reacts to its own viewport position (parallax width)
@@ -239,6 +252,7 @@
     sizeR: document.getElementById("sizeRange"), sizeV: document.getElementById("sizeVal"),
     leadR: document.getElementById("leadRange"), leadV: document.getElementById("leadVal"),
     text: document.getElementById("testerText"),
+    stage: document.querySelector(".tester-stage"),
   };
   function applyTester() {
     if (!T.text) return;
@@ -246,27 +260,42 @@
     T.text.style.fontVariationSettings = "'wght' 500,'wdth' " + w;
     T.text.style.fontSize = s + "px";
     T.text.style.lineHeight = l;
+    // up to size 230 the text stays centred (the slot grows in height); past 230 it anchors to the top so the baseline drops and it keeps growing downward
+    if (T.stage) T.stage.style.alignItems = s > 230 ? "flex-start" : "center";
     T.varV.textContent = w;
     T.sizeV.textContent = s;
     T.leadV.textContent = l.toFixed(2);
   }
   const testerTag = document.getElementById("testerTag");
+  const MAXLEN = 20;
+  const setPh = (el) => {
+    if (!el) return;
+    const empty = !(el.innerText || "").replace(/\n/g, "").trim();
+    if (empty && el.innerHTML) el.innerHTML = "";   // drop the stray <br>/<div> so the placeholder stays inline with the pencil
+    el.classList.toggle("is-empty", empty);
+  };
+  const clampLen = (el) => {
+    if ((el.innerText || "").length <= MAXLEN) return;
+    el.innerText = el.innerText.slice(0, MAXLEN);
+    const r = document.createRange(); r.selectNodeContents(el); r.collapse(false);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  };
   // innerText (not textContent) so Enter / new lines carry across to the other field too
-  function syncTester(src, dst) { if (src && dst) dst.innerText = (src.innerText || "").toUpperCase(); }
+  function syncTester(src, dst) { if (src && dst) dst.innerText = (src.innerText || "").toUpperCase(); setPh(src); setPh(dst); }
   if (T.text) {
     T.style.addEventListener("change", () => { T.varR.value = T.style.value; applyTester(); });
     [T.varR, T.sizeR, T.leadR].forEach(r => r.addEventListener("input", applyTester));
-    T.text.addEventListener("input", () => syncTester(T.text, testerTag));            // glagolitic -> latin
-    if (testerTag) testerTag.addEventListener("input", () => syncTester(testerTag, T.text));  // latin -> glagolitic
+    T.text.addEventListener("input", () => { clampLen(T.text); syncTester(T.text, testerTag); });            // glagolitic -> latin
+    if (testerTag) testerTag.addEventListener("input", () => { clampLen(testerTag); syncTester(testerTag, T.text); });  // latin -> glagolitic
     applyTester();
-    syncTester(T.text, testerTag);
+    setPh(T.text); setPh(testerTag);
   }
 
   /* ---- TYPE TESTER: download the typed Meandrica word as a JPG (black bg, tight 10px margin) ---- */
   let fontB64 = null;
   async function getFontB64() {
     if (fontB64) return fontB64;
-    const buf = await (await fetch("fonts/MeandricaVF.ttf")).arrayBuffer();
+    const buf = await (await fetch("fonts/MeandrikaVF.ttf")).arrayBuffer();
     let bin = ""; const bytes = new Uint8Array(buf);
     for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
     return (fontB64 = btoa(bin));
@@ -375,12 +404,21 @@
   const olinfos = document.querySelector(".olinfos");
   const klanacStage = document.querySelector(".klanac-stage");
   if (olinfos && klanacStage) {
+    // MOBILE: wrap photo + OLINFOS so they rotate together (90° CW) to fill the screen
+    if (window.matchMedia("(max-width:600px)").matches) {
+      const rot = document.createElement("div");
+      rot.className = "rot90";
+      const bg = klanacStage.querySelector(".klanac-bg");
+      klanacStage.insertBefore(rot, bg);
+      rot.appendChild(bg);
+      rot.appendChild(olinfos);
+    }
     function fitOlinfos() {
       const wasJumped = olinfos.classList.contains("jumped");
       olinfos.classList.remove("jumped");          // measure at LOW (widest)
       olinfos.style.fontSize = "100px";
       const w = olinfos.getBoundingClientRect().width;
-      if (w) olinfos.style.fontSize = (100 * klanacStage.clientWidth * 0.98 / w) + "px";
+      if (w) olinfos.style.fontSize = (100 * olinfos.parentElement.clientWidth * 0.98 / w) + "px";
       if (wasJumped) olinfos.classList.add("jumped");
     }
     olinfos.querySelectorAll(".olg").forEach(g => g.style.fontSize = "inherit");
@@ -423,17 +461,54 @@
   if (humskaPoem) {
     const hStage = humskaPoem.closest(".ov-stage");
     const hLines = humskaPoem.querySelectorAll(".hl");
+    // MOBILE: rotate the photo + poem 90° together to fill the screen
+    if (window.matchMedia("(max-width:600px)").matches && hStage) {
+      const rot = document.createElement("div");
+      rot.className = "rot90";
+      const crop = hStage.querySelector(".humska-crop");
+      hStage.insertBefore(rot, crop);
+      rot.appendChild(crop);
+      rot.appendChild(humskaPoem);
+    }
     function fitHumska() {
+      const frame = humskaPoem.parentElement;   // ov-stage (desktop) or the rotated .rot90 (mobile)
       humskaPoem.style.fontSize = "100px";
       let maxW = 0;
       hLines.forEach(l => maxW = Math.max(maxW, l.getBoundingClientRect().width));
-      const byWidth = 100 * hStage.clientWidth * 0.82 / maxW;
-      const byHeight = hStage.clientHeight * 0.58 / (hLines.length * 0.95);
+      const byWidth = 100 * frame.clientWidth * 0.82 / maxW;
+      const byHeight = frame.clientHeight * 0.58 / (hLines.length * 0.95);
       if (maxW) humskaPoem.style.fontSize = Math.min(byWidth, byHeight) + "px";
     }
     fitHumska();
     if (document.fonts && document.fonts.load) document.fonts.load('1em "Meandrica"').then(fitHumska);
     window.addEventListener("resize", fitHumska);
+  }
+
+  /* ---- STOL: fit OMNE / TRINUM / PERFECTUM to the photo (as tall as fits, no overlap) ---- */
+  const stolWord = document.querySelector(".stol-word");
+  const stolStage = document.querySelector("#m-stol .stol-stage");
+  if (stolWord && stolStage) {
+    const sLines = stolWord.querySelectorAll("span");
+    const LH = 0.90;   // must match .stol-word line-height
+    function fitStol() {
+      // measure the longest line at REGULAR (the widest = hover state) so nothing ever gets cropped
+      sLines.forEach(s => { s.style.transition = "none"; s.style.fontVariationSettings = "'wght' 500,'wdth' 500"; });
+      stolWord.style.fontSize = "100px";
+      let maxW = 0;
+      sLines.forEach(l => maxW = Math.max(maxW, l.getBoundingClientRect().width));
+      const byWidth = maxW ? 100 * stolStage.clientWidth * 0.96 / maxW : 200;
+      const byHeight = stolStage.clientHeight * 0.98 / (sLines.length * LH);
+      stolWord.style.fontSize = Math.min(byWidth, byHeight) + "px";   // fits both ways; sits low in the photo
+      // snap back to BLACK without animating, then re-enable the hover transition
+      sLines.forEach(s => { s.style.fontVariationSettings = ""; });
+      void stolWord.offsetWidth;
+      sLines.forEach(s => { s.style.transition = ""; });
+    }
+    fitStol();
+    const stolImg = stolStage.querySelector("img");
+    if (stolImg && !stolImg.complete) stolImg.addEventListener("load", fitStol);
+    if (document.fonts && document.fonts.load) document.fonts.load('1em "Meandrica"').then(fitStol);
+    window.addEventListener("resize", fitStol);
   }
 
   /* ---- AXES: REGULAR / LOW / BLACK change the GLAGOLJATI style ---- */
@@ -463,18 +538,18 @@
     "glago-p2": "It developed from the rounded form during the 12th and 13th centuries, when priests in the area of present-day Croatia (especially in Istria and the Kvarner) began to write faster, more practically and on poorer paper, turning the rounded lines into straight ones.",
     "nav-aleja": "ALLEY",
     "aleja-label": "THE ALLEY OF GLAGOLITIC PRIESTS / CONTENTS",
-    "aleja-p1": "How do you present the Glagolitic script without showing off the finest Glagolitic museum? The Alley of Glagolitic Priests is a stone memorial path between two Istrian gems – the medieval towns of Hum („the smallest town in the world“ according to Guinness) and Roč („the Glagolitic capital“). It is about 7 kilometres long and full of symbols, inscriptions and sculptures in the shape of Glagolitic letters – in fact, the whole path is an open-air museum dedicated to Croatia's Glagolitic heritage.",
-    "aleja-p2": "The Alley was conceived by Josip Bratulić, sculpturally realised by Želimir Janeš, and named by Zvane Črnja.",
+    "aleja-p1": "How do you present the Glagolitic script without showing off the finest Glagolitic museum? The Alley of Glagolitic Priests is a stone memorial path between two Istrian gems – the medieval towns of Hum („the smallest town in the world“ according to Guinness) and Roč („the Glagolitic capital“). ",
+    "aleja-p2": "It is about 7 kilometres long and full of symbols, inscriptions and sculptures in the shape of Glagolitic letters – in fact, the whole path is an open-air museum dedicated to Croatia's Glagolitic heritage. The Alley was conceived by Josip Bratulić, sculpturally realised by Želimir Janeš, and named by Zvane Črnja.",
     "stup-h4": "THE PILLAR OF ČAKAVSKI SABOR",
-    "stup-p": "The Čakavian Assembly chose the letter <b>S</b> as its emblem, which in Glagolitic looks like an Istrian mushroom. In the Old Slavonic alphabet the letter S is called <i>slovo</i>, a term that denotes several concepts: mind, reason, word, etc.",
+    "stup-p": "The Čakavian Assembly chose the letter <b>S</b> as its emblem, which in Glagolitic looks like an Istrian mushroom. In the Old Slavonic alphabet the letter <b>S</b> is called <b>slovo</b>, a term that denotes several concepts: mind, reason, word, etc.",
     "stol-h4": "THE TABLE OF CYRIL AND METHODIUS",
-    "stol-p": "<i>Omne trinum perfectum</i> = everything in threes is perfect. Why a table? That is where the family gathers, eats, talks and agrees — it is the place of gathering.",
+    "stol-p": "Why a table? That is where the family gathers, eats, talks and agrees — it is the place of gathering.",
     "katedra-h4": "THE CHAIR OF CLEMENT OF OHRID",
     "katedra-p": "The most interesting fact about this monument is that it stands beneath an oak full of clusters of mistletoe, and from the white mistletoe of the Hum region they make a well-known brandy called <b>biska</b>.",
     "lap-h4": "THE GLAGOLITIC LAPIDARIUM",
     "lap-p": "In Brnobići, by the little church of Our Lady of the Snows, a drystone wall bears replicas of the 11 oldest Glagolitic inscriptions – from the Baška Tablet to the Valun Tablet.",
     "klanac-h4": "THE GORGE OF THE CROATIAN LUCIDARIUM",
-    "klanac-p": "This is actually a monument to the weather forecast of its day. It depicts Mount Učka and the cloud from which the Istrians<br>would read whether it would rain or not.",
+    "klanac-p": "This is actually a monument to the weather forecast of its day. It depicts Mount Učka and the cloud from which the Istrians would read whether it would rain or not.",
     "vidikovac-h4": "THE BELVEDERE OF<br>GREGORIUS OF NIN",
     "vidikovac-p": "A large stone block with inscriptions in three scripts: Glagolitic, Cyrillic and Latin. Gregory of Nin was a bishop who introduced worship in the vernacular language.",
     "uspon-h4": "THE ISTRIAN DEMARCATION<br>ACT RISE",
@@ -486,19 +561,34 @@
     "spomenik-h4": "THE MONUMENT TO<br>RESISTANCE AND FREEDOM",
     "spomenik-p": "Three stone blocks stacked one upon another symbolise three ages: antiquity, the Middle Ages and the modern age, but a single message: resistance to violence and the longing for freedom are eternal. It was created instead of a planned obelisk when lightning felled a hundred-year-old oak – nature decided that something different was needed here.",
     "humska-h4": "HUM GATES",
-    "humska-p": "Heavy copper double doors with handles shaped like the horns of a boškarin ox bear two inscriptions: an old Glagolitic one (<i>I vrata ne zatvoret se v dne...</i>) and a contemporary poem by Vladimir Pernić. Entering the smallest town in the world begins by opening the doors which, according to the inscription, are never locked — except perhaps to the <i>defiled</i>.",
+    "humska-p": "Heavy copper double doors with handles shaped like the horns of a boškarin ox bear two inscriptions: an old Glagolitic one („I vrata ne zatvoret se v dne...“) and a contemporary poem by Vladimir Pernić. Entering the smallest town in the world begins by opening the doors which, according to the inscription, are never locked — except perhaps to the defiled.",
     "footer-1": "MEANDRIKA · VARIABLE GLAGOLITIC FONT · TYPE SPECIMEN",
     "footer-2": "© 2026 AMRA LEVAK · University of Rijeka",
     "lap-tip": "GLAGOLJATI = TO SPEAK",
     "hl-1": "THE GATES DO NOT CLOSE BY DAY",
     "hl-2": "THERE IS NO NIGHT IN THIS TOWN",
     "hl-3": "AND LET NONE ENTER WHO IS DEFILED",
+    "ctrl-style": "STYLE",
+    "ctrl-var": "VARIABILITY",
+    "ctrl-size": "SIZE",
+    "ctrl-lead": "LEADING",
+    "btn-jpg": "DOWNLOAD JPG",
+    "btn-font": "DOWNLOAD FONT",
+    "btn-tote": "GET THIS ON A TOTE",
+    "merch-cap-1": "TOTE — BISKA, 20 €",
+    "merch-cap-2": "TEE — LIPO SI GRD, 30 €",
+    "merch-cap-3": "TOTE — OLINFOS, 20 €",
+    "merch-info": "In the type tester, make your design, then send us the downloaded .jpg. We'll send you payment info, and upon receiving payment confirmation we'll send you your personalised tote or t-shirt!",
   };
   function setLang(lang) {
     meLang = lang;
     document.querySelectorAll("[data-i18n]").forEach(el => {
       if (el.dataset.hr === undefined) el.dataset.hr = el.innerHTML;
       el.innerHTML = (lang === "eng" && EN[el.dataset.i18n] !== undefined) ? EN[el.dataset.i18n] : el.dataset.hr;
+    });
+    // contenteditable placeholders (data-ph) swap by language too
+    document.querySelectorAll("[data-ph-hr]").forEach(el => {
+      el.dataset.ph = (lang === "eng" && el.dataset.phEn) ? el.dataset.phEn : el.dataset.phHr;
     });
     document.documentElement.lang = (lang === "eng") ? "en" : "hr";
     document.querySelectorAll(".lang-btn").forEach(x => x.classList.toggle("is-active", x.dataset.lang === lang));
@@ -517,35 +607,60 @@
     });
   }
 
-  /* ---- personalised-merch info popup ---- */
-  const merchInfo = document.getElementById("merchInfo");
-  const merchModal = document.getElementById("merchModal");
-  if (merchInfo && merchModal) {
-    const close = () => { merchModal.hidden = true; };
-    merchInfo.addEventListener("click", () => { merchModal.hidden = false; });
-    const mClose = document.getElementById("merchModalClose");
-    if (mClose) mClose.addEventListener("click", close);
-    merchModal.addEventListener("click", (e) => { if (e.target === merchModal) close(); });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  /* ---- back-to-top arrow ---- */
+  const toTop = document.getElementById("toTop");
+  if (toTop) toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+  /* ---- MOBILE hamburger menu ---- */
+  const hamburger = document.getElementById("hamburger");
+  const mobilemenu = document.getElementById("mobilemenu");
+  if (hamburger && mobilemenu) {
+    const setMenu = (open) => {
+      mobilemenu.classList.toggle("open", open);
+      hamburger.classList.toggle("open", open);
+      hamburger.setAttribute("aria-expanded", String(open));
+      mobilemenu.setAttribute("aria-hidden", String(!open));
+      document.body.style.overflow = open ? "hidden" : "";
+    };
+    hamburger.addEventListener("click", () => setMenu(!mobilemenu.classList.contains("open")));
+    mobilemenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setMenu(false)));
+    // scroll-spy highlight in the menu too (mirror the sidenav's active id)
+    window.addEventListener("scroll", () => {
+      const active = document.querySelector(".sidenav a.active");
+      if (!active) return;
+      const id = active.getAttribute("href");
+      mobilemenu.querySelectorAll("a").forEach(a => a.classList.toggle("active", a.getAttribute("href") === id));
+    }, { passive: true });
   }
 
-  /* ---- MAP: custom circle cursor that grows over a clickable monument ---- */
-  const alejaMap = document.querySelector(".aleja-map");
-  if (alejaMap) {
-    const mapCursor = document.createElement("div");
-    mapCursor.className = "map-cursor";
-    document.body.appendChild(mapCursor);
-    alejaMap.addEventListener("mousemove", (e) => {
-      mapCursor.style.left = e.clientX + "px";
-      mapCursor.style.top = e.clientY + "px";
-      mapCursor.classList.add("on");
-    });
-    alejaMap.addEventListener("mouseleave", () => mapCursor.classList.remove("on"));
-    document.querySelectorAll(".map-hot").forEach(h => {
-      h.addEventListener("mouseenter", () => mapCursor.classList.add("big"));
-      h.addEventListener("mouseleave", () => mapCursor.classList.remove("big"));
-    });
-  }
+  /* ---- MOBILE: AMRA + KNIFER span the full screen width ---- */
+  (function () {
+    const amra = document.querySelector(".big-glyph");
+    const knifer = document.querySelector(".knifer-word");
+    // measure at the widest variation (the words only ever animate narrower), then fit to the parent width
+    function fitWord(el, frac, widest, kidSel) {
+      if (!el || !el.parentElement) return;
+      const kids = kidSel ? [...el.querySelectorAll(kidSel)] : [el];
+      const prev = kids.map(k => k.style.transition);
+      kids.forEach(k => { k.style.transition = "none"; k.style.fontVariationSettings = "'wght' 500,'wdth' " + widest; });
+      el.style.fontSize = "100px";
+      const w = el.getBoundingClientRect().width, avail = el.parentElement.clientWidth;
+      if (w && avail) el.style.fontSize = (100 * avail * frac / w) + "px";
+      kids.forEach((k, i) => { k.style.fontVariationSettings = ""; void k.offsetWidth; k.style.transition = prev[i] || ""; });
+    }
+    function fitBig() {
+      if (!window.matchMedia("(max-width:600px)").matches) {   // desktop: hand back to CSS
+        if (amra) amra.style.fontSize = "";
+        if (knifer) knifer.style.fontSize = "";
+        return;
+      }
+      fitWord(amra, 0.98, 500, ".al");    // AMRA — widest at REGULAR (500)
+      fitWord(knifer, 0.98, 1000, null);  // KNIFER — widest at LOW (1000)
+    }
+    fitBig();
+    if (document.fonts && document.fonts.load) document.fonts.load('1em "Meandrica"').then(fitBig, fitBig);
+    window.addEventListener("resize", fitBig);
+  })();
 
   /* ---- Latin-translation tooltip on every Meandrica display word ---- */
   const meTip = document.createElement("div");
@@ -556,16 +671,18 @@
     [".big-glyph", "AMRA"],
     [".knifer-word", "KNIFER"],
     [".stup-ss", "SS"],
-    [".olinfos", "OLINFOS = STARI LATINSKI I SREDNJOVJEKOVNI NAZIV ZA PLANINU UČKU",
-                 "OLINFOS = THE OLD LATIN AND MEDIEVAL NAME FOR MOUNT UČKA"],
-    [".zid-crop", "FIDES = LATINSKA RIJEČ KOJA ZNAČI VJERA, POVJERENJE, POŠTENJE ILI VJERNOST ZADANOJ RIJEČI.",
-                  "FIDES = A LATIN WORD MEANING FAITH, TRUST, HONESTY OR FIDELITY TO ONE'S GIVEN WORD."],
+    [".olinfos .olg", "OLINFOS = STARI LATINSKI I SREDNJOVJEKOVNI NAZIV ZA PLANINU UČKU",
+                      "OLINFOS = THE OLD LATIN AND MEDIEVAL NAME FOR MOUNT UČKA"],
+    [".zid-hot", "FIDES = LATINSKA RIJEČ KOJA ZNAČI VJERA, POVJERENJE, POŠTENJE ILI VJERNOST ZADANOJ RIJEČI.",
+                 "FIDES = A LATIN WORD MEANING FAITH, TRUST, HONESTY OR FIDELITY TO ONE'S GIVEN WORD."],
     [".glago-photo", "AZ BUKI VEDE GLAGOL = PRVA ČETIRI SLOVA STAROSLAVENSKE ABECEDE KOJA TVORE SMISLENU PORUKU: JA SLOVA ZNAJUĆI GOVORIM",
                      "AZ BUKI VEDE GLAGOL = THE FIRST FOUR LETTERS OF THE OLD SLAVONIC ALPHABET THAT FORM A MEANINGFUL MESSAGE: I, KNOWING THE LETTERS, SPEAK"],
     [".vid-istra", "ISTRA"],
     [".uspon-word", "LLLLLLL"],
     [".odm-marquee-track", "VITA VITA · ŠTAMPA NAŠA · GORI GRE"],
-    [".sfsn-word", "SMRT FAŠIZMU SLOBODA NARODU"],
+    [".sfsn-word", "SMRT FAŠIZMU SLOBODA NARODU", "DEATH TO FASCISM, FREEDOM TO THE PEOPLE"],
+    [".stol-word", "OMNE TRINUM PERFECTUM = SVE TROJNO JE SAVRŠENO",
+                   "OMNE TRINUM PERFECTUM = EVERYTHING IN THREES IS PERFECT"],
   ];
   meTargets.forEach(([sel, hr, en]) => {
     document.querySelectorAll(sel).forEach(el => {
@@ -596,7 +713,7 @@
       if (stage && cap) stage.after(cap);
     });
 
-    const pulse = [".big-glyph", ".knifer-word", ".stup-ss", ".vid-istra", ".uspon-word"]
+    const pulse = [".big-glyph", ".knifer-word", ".stup-ss", ".vid-istra", ".uspon-word", ".stol-word"]
       .map(s => document.querySelector(s)).filter(Boolean);
     pulse.forEach((el, i) => {
       const cycle = () => { el.classList.add("anim"); setTimeout(() => el.classList.remove("anim"), 1500); };

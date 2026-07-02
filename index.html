@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Meandrika — Type Specimen</title>
 <meta name="description" content="Meandrika — glagoljični varijabilni font inspiriran meandrima Julija Knifera. Type specimen by Amra Levak." />
-<link rel="preload" href="fonts/MeandricaVF.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet" />
+<link rel="preload" href="fonts/MeandrikaVF.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="preload" href="fonts/Metropolis-Medium.otf" as="font" type="font/otf" crossorigin />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -27,9 +25,23 @@
       <button class="lang-btn is-active" data-lang="hr">HR</button>
       <button class="lang-btn" data-lang="eng">ENG</button>
     </div>
-    <a class="getfont" href="#merch">GET FONT</a>
+    <a class="getfont" href="#tester">GET FONT</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobilemenu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 </header>
+
+<!-- MOBILE MENU (hamburger) -->
+<nav class="mobilemenu" id="mobilemenu" aria-hidden="true">
+  <a href="#hero">INFO</a>
+  <a href="#aleja" data-i18n="nav-aleja">ALEJA</a>
+  <a href="#charset">CHARACTER SET</a>
+  <a href="#axes-lap">AXES</a>
+  <a href="#tester">TYPE TESTER</a>
+  <a href="#merch">MERCH</a>
+  <a href="#tester" class="mm-getfont">GET FONT</a>
+</nav>
 
 <!-- RIGHT MINI NAV -->
 <nav class="sidenav" id="sidenav">
@@ -91,26 +103,24 @@
 
 <!-- ============ THE ALEJA (TRAIL) ============ -->
 <section class="section aleja" id="aleja">
-  <div class="aleja-toc reveal">
-    <div class="aleja-intro-text">
-      <div class="label" data-i18n="aleja-label">ALEJA GLAGOLJAŠA / SADRŽAJ</div>
-      <p class="body" data-i18n="aleja-p1">Kako prikazati glagoljicu, a ne pohvaliti se najboljim glagoljičnim muzejom? Aleja glagoljaša je kameni spomen-put između dvaju istarskih dragulja – srednjovjekovnih gradova Hum („najmanji grad na svijetu“ prema Guinnessu) i Roč („glagoljička prijestolnica“). Duga je oko 7 kilometara i puna je simbola, natpisa i skulptura u obliku glagoljičkih slova – zapravo, cijeli je put otvoren muzej posvećen hrvatskoj glagoljičkoj baštini.</p>
-      <p class="body dim" data-i18n="aleja-p2">Aleju je osmislio Josip Bratulić, kiparski ju izveo Želimir Janeš, a naziv joj je dao Zvane Črnja.</p>
-    </div>
-    <div class="aleja-map">
-      <img class="aleja-map-img" src="assets/karta.png" alt="Karta Aleje glagoljaša, Hum — Roč" />
-      <a class="map-hot" href="#m-stup" aria-label="Stup Čakavskog sabora" style="left:51%;top:1%;width:41%;height:14%"></a>
-      <a class="map-hot" href="#m-stol" aria-label="Stol Ćirila i Metoda" style="left:30%;top:18%;width:24%;height:13%"></a>
-      <a class="map-hot" href="#m-katedra" aria-label="Katedra Klimenta Ohridskog" style="left:61%;top:18%;width:38%;height:15%"></a>
-      <a class="map-hot" href="#axes-lap" aria-label="Glagoljski lapidarij" style="left:23%;top:28%;width:30%;height:16%"></a>
-      <a class="map-hot" href="#m-klanac" aria-label="Klanac hrvatskih lucidara" style="left:57%;top:41%;width:42%;height:15%"></a>
-      <a class="map-hot" href="#m-uspon" aria-label="Uspon Istarskog razvoda" style="left:12%;top:57%;width:34%;height:13%"></a>
-      <a class="map-hot" href="#m-vidikovac" aria-label="Vidikovac Grgura Ninskog" style="left:57%;top:59%;width:36%;height:12%"></a>
-      <a class="map-hot" href="#m-zid" aria-label="Zid hrvatskih protestanata i heretika" style="left:53%;top:70%;width:47%;height:11%"></a>
-      <a class="map-hot" href="#m-odmoriste" aria-label="Odmorište Jurja Žakna" style="left:7%;top:79%;width:34%;height:10%"></a>
-      <a class="map-hot" href="#m-spomenik" aria-label="Spomenik otporu i slobodi" style="left:61%;top:83%;width:39%;height:11%"></a>
-      <a class="map-hot" href="#m-humska" aria-label="Humska vrata" style="left:36%;top:85%;width:23%;height:12%"></a>
-    </div>
+  <div class="label reveal" data-i18n="aleja-label">ALEJA GLAGOLJAŠA / SADRŽAJ</div>
+  <div class="aleja-intro-cols reveal">
+    <p class="body" data-i18n="aleja-p1">Kako prikazati glagoljicu, a ne pohvaliti se najboljim glagoljičnim muzejom? Aleja glagoljaša je kameni spomen-put između dvaju istarskih dragulja – srednjovjekovnih gradova Hum („najmanji grad na svijetu“ prema Guinnessu) i Roč („glagoljička prijestolnica“). </p>
+    <p class="body" data-i18n="aleja-p2">Duga je oko 7 kilometara i puna je simbola, natpisa i skulptura u obliku glagoljičkih slova – zapravo, cijeli je put otvoren muzej posvećen hrvatskoj glagoljičkoj baštini. Aleju je osmislio Josip Bratulić, kiparski ju izveo Želimir Janeš, a naziv joj je dao Zvane Črnja.</p>
+  </div>
+  <div class="aleja-map reveal">
+    <img class="aleja-map-img" src="assets/karta-fin.png" alt="Karta Aleje glagoljaša, Hum — Roč" />
+    <a class="map-hot" href="#m-stup" aria-label="Stup Čakavskog sabora" style="left:50.7%;top:1.6%;width:11.2%;height:13.6%"><span class="map-tip"><span data-i18n="stup-h4">STUP ČAKAVSKOG SABORA</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-stol" aria-label="Stol Ćirila i Metoda" style="left:39.1%;top:19.7%;width:15.1%;height:13.3%"><span class="map-tip"><span data-i18n="stol-h4">STOL ĆIRILA I METODA</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-katedra" aria-label="Katedra Klimenta Ohridskog" style="left:61.3%;top:22.8%;width:22.3%;height:13.3%"><span class="map-tip"><span data-i18n="katedra-h4">KATEDRA KLIMENTA OHRIDSKOG</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#axes-lap" aria-label="Glagoljski lapidarij" style="left:39.1%;top:33.4%;width:10.7%;height:13%"><span class="map-tip"><span data-i18n="lap-h4">GLAGOLJSKI LAPIDARIJ</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-klanac" aria-label="Klanac hrvatskih lucidara" style="left:54.5%;top:42.2%;width:28.1%;height:13.6%"><span class="map-tip"><span data-i18n="klanac-h4">KLANAC HRVATSKIH LUCIDARA</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-uspon" aria-label="Uspon Istarskog razvoda" style="left:13.5%;top:58.4%;width:30.5%;height:8%"><span class="map-tip"><span data-i18n="uspon-h4">USPON ISTARSKOG RAZVODA</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-vidikovac" aria-label="Vidikovac Grgura Ninskog" style="left:54.5%;top:56.5%;width:13.1%;height:13%"><span class="map-tip"><span data-i18n="vidikovac-h4">VIDIKOVAC GRGURA NINSKOG</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-zid" aria-label="Zid hrvatskih protestanata i heretika" style="left:48.7%;top:69%;width:23.3%;height:10.2%"><span class="map-tip"><span data-i18n="zid-h4">ZID HRVATSKIH PROTESTANATA I HERETIKA</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-odmoriste" aria-label="Odmorište Žakna Jurja" style="left:21.2%;top:79%;width:20.4%;height:10.2%"><span class="map-tip"><span data-i18n="odmoriste-h4">ODMORIŠTE ŽAKNA JURJA</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-spomenik" aria-label="Spomenik otporu i slobodi" style="left:60.8%;top:85.5%;width:20.9%;height:8%"><span class="map-tip"><span data-i18n="spomenik-h4">SPOMENIK OTPORU I SLOBODI</span><span class="mt-arrow">↓</span></span></a>
+    <a class="map-hot" href="#m-humska" aria-label="Humska vrata" style="left:45.8%;top:84.3%;width:13.1%;height:13%"><span class="map-tip"><span data-i18n="humska-h4">HUMSKA VRATA</span><span class="mt-arrow">↓</span></span></a>
   </div>
 </section>
 
@@ -137,16 +147,19 @@
         <div class="stup-ss" aria-hidden="true"><span class="ss ss-a">S</span><span class="ss ss-b">S</span></div>
         <div class="mon-cap">
           <h4 data-i18n="stup-h4">STUP ČAKAVSKOG SABORA</h4>
-          <p data-i18n="stup-p">Čakavski sabor je za svoj zaštitni znak odabrao slovo <b>S</b>, koja u glagoljici izgleda kao istarska gljiva. U staroslavenskoj azbuci slovo S se naziva <i>slovo</i>, a taj termin označava više pojmova: um, razum, riječ, itd.</p>
+          <p data-i18n="stup-p">Čakavski sabor je za svoj zaštitni znak odabrao slovo <b>S</b>, koja u glagoljici izgleda kao istarska gljiva. U staroslavenskoj azbuci slovo <b>S</b> se naziva <b>slovo</b>, a taj termin označava više pojmova: um, razum, riječ, itd.</p>
         </div>
       </div>
     </article>
 
     <article id="m-stol" class="monument alt reveal">
-      <img src="assets/stol-monument.png" alt="Stol Ćirila i Metoda" />
+      <div class="stol-stage">
+        <img src="assets/stol-notext.png" alt="Stol Ćirila i Metoda" />
+        <div class="stol-word" tabindex="0"><span>OMNE</span><span>TRINUM</span><span>PERFECTUM</span></div>
+      </div>
       <div class="mon-cap">
         <h4 data-i18n="stol-h4">STOL ĆIRILA I METODA</h4>
-        <p data-i18n="stol-p"><i>Omne trinum perfectum</i> = sve trojno je savršeno. Zašto stol? Tu se okuplja obitelj, jede se, razgovara, dogovara, to je mjesto okupljanja.</p>
+        <p data-i18n="stol-p">Zašto stol? Tu se okuplja obitelj, jede se, razgovara, dogovara, to je mjesto okupljanja.</p>
       </div>
     </article>
 
@@ -186,7 +199,7 @@
         </div>
         <div class="mon-cap klanac-cap">
           <h4 data-i18n="klanac-h4">KLANAC HRVATSKIH LUCIDARA</h4>
-          <p data-i18n="klanac-p">Ovo je zapravo spomenik tadašnjoj vremenskoj prognozi. Predstavlja Učku i oblak iz kojeg bi Istrijani<br>čitali hoće li kišiti ili neće.</p>
+          <p data-i18n="klanac-p">Ovo je zapravo spomenik tadašnjoj vremenskoj prognozi. Predstavlja Učku i oblak iz kojeg bi Istrijani čitali hoće li kišiti ili neće.</p>
         </div>
       </div>
     </article>
@@ -218,7 +231,7 @@
     <!-- ZID HRVATSKIH PROTESTANATA I HERETIKA -->
     <article id="m-zid" class="monument ov-mon zid-mon reveal">
       <div class="ov-stage">
-        <div class="zid-crop"><img id="zidImg" src="assets/zid-1.png" width="1512" height="982" alt="Zid hrvatskih protestanata i heretika" /></div>
+        <div class="zid-crop"><img id="zidImg" src="assets/zid-1.png" width="1512" height="982" alt="Zid hrvatskih protestanata i heretika" /><span class="zid-hot" aria-hidden="true"></span></div>
         <div class="mon-cap zid-cap">
           <h4 data-i18n="zid-h4">ZID HRVATSKIH<br>PROTESTANATA I HERETIKA</h4>
           <p data-i18n="zid-p">Suhozid s imenima poput Matije Vlačića Ilirika i Marka Antuna Dominisa – onih koji su 16. st. tiskali Evanđelje na narodnom jeziku i platili za to. Zid ne brani posjed, nego sjećanje: hereticima su se često proglašavali oni koji su govorili istinu preglasno.</p>
@@ -261,7 +274,7 @@
         </div>
         <div class="mon-cap ov-cap-tl humska-cap">
           <h4 data-i18n="humska-h4">HUMSKA VRATA</h4>
-          <p data-i18n="humska-p">Teška bakrena dvokrilna vrata s ručkama u obliku rogova boškarina nose dva natpisa: stari glagoljski (<i>I vrata ne zatvoret se v dne...</i>) i suvremenu pjesmu Vladimira Pernića. Ulazak u najmanji grad svijeta započinje otvaranjem vrata koja, prema natpisu, nikad ne bivaju zaključana, osim možda za one <i>okaljane</i>.</p>
+          <p data-i18n="humska-p">Teška bakrena dvokrilna vrata s ručkama u obliku rogova boškarina nose dva natpisa: stari glagoljski („I vrata ne zatvoret se v dne...“) i suvremenu pjesmu Vladimira Pernića. Ulazak u najmanji grad svijeta započinje otvaranjem vrata koja, prema natpisu, nikad ne bivaju zaključana, osim možda za one okaljane.</p>
         </div>
       </div>
     </article>
@@ -275,7 +288,7 @@
 
   <div class="tester-controls reveal">
     <label class="ctrl">
-      <span>STYLE</span>
+      <span data-i18n="ctrl-style">REZ</span>
       <select id="styleSel">
         <option value="1000">LOW</option>
         <option value="500">REGULAR</option>
@@ -283,48 +296,43 @@
       </select>
     </label>
     <label class="ctrl wide">
-      <span>VARIABILITY <em id="varVal">10</em></span>
+      <span><span data-i18n="ctrl-var">VARIJABILNOST</span> <em id="varVal">10</em></span>
       <input type="range" id="varRange" min="10" max="1000" value="10" />
     </label>
     <label class="ctrl wide">
-      <span>SIZE <em id="sizeVal">180</em></span>
+      <span><span data-i18n="ctrl-size">VELIČINA</span> <em id="sizeVal">180</em></span>
       <input type="range" id="sizeRange" min="40" max="320" value="180" />
     </label>
     <label class="ctrl wide">
-      <span>LEADING <em id="leadVal">0.9</em></span>
+      <span><span data-i18n="ctrl-lead">PRORED</span> <em id="leadVal">0.9</em></span>
       <input type="range" id="leadRange" min="70" max="160" value="90" />
     </label>
   </div>
 
-  <div class="tester-tag reveal" id="testerTag" contenteditable="true" spellcheck="false">MANEŠTRA</div>
+  <div class="tester-tag reveal is-empty" id="testerTag" contenteditable="true" spellcheck="false" data-ph="PIŠI OVDJE" data-ph-hr="PIŠI OVDJE" data-ph-en="TYPE HERE"></div>
   <div class="tester-stage">
-    <div class="tester-text" id="testerText" contenteditable="true" spellcheck="false">MANEŠTRA</div>
+    <div class="tester-text is-empty" id="testerText" contenteditable="true" spellcheck="false" data-ph="MEANDRIKA"></div>
   </div>
-  <button class="tester-dl reveal" id="testerDl" type="button">DOWNLOAD JPG</button>
-  <a class="cta tester-cta reveal" href="#merch">GET THIS ON A TOTE</a>
+  <div class="tester-actions reveal">
+    <button class="tester-btn" id="testerDl" type="button" data-i18n="btn-jpg">PREUZMI JPG</button>
+    <a class="tester-btn" href="fonts/MeandrikaVF.ttf" download="Meandrika.otf" id="getfontCta" data-i18n="btn-font">PREUZMI FONT</a>
+    <a class="tester-btn" href="#merch" data-i18n="btn-tote">NABAVI NA TORBI</a>
+  </div>
 </section>
 
 <!-- ============ MERCH ============ -->
 <section class="section merch" id="merch">
   <div class="label reveal">MERCH</div>
   <div class="merch-grid">
-    <figure class="reveal"><img src="assets/mockup-biska.png" alt="Meandrika BISKA tote bag" /><figcaption>TOTE — BISKA, 20 €</figcaption></figure>
-    <figure class="reveal mid"><img src="assets/mockup-tee.png" alt="Meandrika LIPO SI GRD t-shirt" /><figcaption>TEE — LIPO SI GRD, 30 €</figcaption></figure>
-    <figure class="reveal"><img src="assets/mockup-olinfos.png" alt="Meandrika OLINFOS tote bag" /><figcaption>TOTE — OLINFOS, 20 €</figcaption></figure>
+    <figure class="reveal"><a class="merch-buy" href="mailto:meandrika.shop@gmail.com?subject=Personalised%20Meandrika%20merch"><img src="assets/mockup-biska.png" alt="Meandrika BISKA tote bag" /></a><figcaption data-i18n="merch-cap-1">TORBA — BISKA, 20 €</figcaption></figure>
+    <figure class="reveal mid"><a class="merch-buy" href="mailto:meandrika.shop@gmail.com?subject=Personalised%20Meandrika%20merch"><img src="assets/mockup-tee.png" alt="Meandrika LIPO SI GRD t-shirt" /></a><figcaption data-i18n="merch-cap-2">MAJICA — LIPO SI GRD, 30 €</figcaption></figure>
+    <figure class="reveal"><a class="merch-buy" href="mailto:meandrika.shop@gmail.com?subject=Personalised%20Meandrika%20merch"><img src="assets/mockup-olinfos.png" alt="Meandrika OLINFOS tote bag" /></a><figcaption data-i18n="merch-cap-3">TORBA — OLINFOS, 20 €</figcaption></figure>
   </div>
-  <div class="merch-custom-row reveal">
-    <a class="merch-custom" href="mailto:meandrika.shop@gmail.com?subject=Personalised%20Meandrika%20merch">…or get personalised merch</a>
-    <button class="merch-info" id="merchInfo" type="button" aria-label="How personalised merch works">i</button>
+  <div class="merch-info-text reveal">
+    <p data-i18n="merch-info">U type testeru osmisli svoj dizajn, zatim nam pošalji preuzeti .jpg. Poslat ćemo ti podatke za plaćanje, a nakon potvrde uplate šaljemo ti tvoju personaliziranu torbu ili majicu!</p>
+    <a class="info-mail" href="mailto:meandrika.shop@gmail.com?subject=Personalised%20Meandrika%20merch">meandrika.shop@gmail.com</a>
   </div>
-  <a class="cta reveal" href="fonts/MeandricaVF.ttf" download="Meandrika.otf" id="getfontCta">DOWNLOAD FONT</a>
-
-  <div class="info-modal" id="merchModal" hidden>
-    <div class="info-box">
-      <button class="info-close" id="merchModalClose" type="button" aria-label="Close">×</button>
-      <p>In the type tester, make your design, then send us the downloaded .jpg. We'll send you payment info, and upon receiving payment confirmation we'll send you your personalised tote or t-shirt!</p>
-      <a class="info-mail" href="mailto:meandrika.shop@gmail.com?subject=Personalised%20Meandrika%20merch">meandrika.shop@gmail.com</a>
-    </div>
-  </div>
+  <button class="to-top" id="toTop" type="button" aria-label="Back to top">↑</button>
 </section>
 
 <footer class="footer">
